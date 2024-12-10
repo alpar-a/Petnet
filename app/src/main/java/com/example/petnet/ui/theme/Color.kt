@@ -1,7 +1,7 @@
 package com.example.petnet.ui.theme
 import androidx.compose.ui.graphics.Color
 
-val primaryLight = Color(0xFF8E4D31)
+val primaryLight = Color(0xFFEB6423)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFFFDBCE)
 val onPrimaryContainerLight = Color(0xFF370E00)
@@ -109,7 +109,7 @@ val surfaceContainerLightHighContrast = Color(0xFFFCEAE4)
 val surfaceContainerHighLightHighContrast = Color(0xFFF6E4DE)
 val surfaceContainerHighestLightHighContrast = Color(0xFFF1DFD9)
 
-val primaryDark = Color(0xFFFFB598)
+val primaryDark = Color(0xFFEB6423)
 val onPrimaryDark = Color(0xFF552008)
 val primaryContainerDark = Color(0xFF71361C)
 val onPrimaryContainerDark = Color(0xFFFFDBCE)
