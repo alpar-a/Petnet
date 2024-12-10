@@ -57,7 +57,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    implementation(libs.androidx.core.ktx.v1131)
-    implementation(libs.androidx.ui.text.google.fonts.v132)
 }
