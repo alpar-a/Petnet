@@ -58,6 +58,22 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.androidx.material)
+    implementation(libs.ui.tooling)
+    implementation(libs.ui)
+    implementation(libs.material3) // Latest stable Material3
+    implementation(libs.androidx.ui.v160)
+    implementation(libs.androidx.ui.tooling.v160)
+
+    implementation(libs.androidx.material3.v120)
+    implementation("androidx.compose.material3:material3-window-size-class:1.2.0")
+    implementation(libs.ui)
+    implementation(libs.ui.tooling)
     implementation(libs.androidx.material.icons.extended)
+
+    implementation(libs.material3)
+    implementation("androidx.compose.material3:material3-window-size-class:1.2.0")
+    implementation(libs.androidx.material.icons.extended.v160)
 
 }

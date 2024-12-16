@@ -1,5 +1,6 @@
 package com.example.petnet
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,7 +30,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
+import androidx.core.content.ContextCompat.startActivity
 import com.example.petnet.ui.theme.PetnetTheme
 
 val balootamma = FontFamily(Font(R.font.balootammaregular))
@@ -49,6 +52,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,8 +100,8 @@ fun LoginScreen() {
             leadingIcon = {
                 Icon(Icons.Default.Email, contentDescription = null, tint = Color.Gray)
             },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                containerColor = Color(0xFFF8E16C),
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedContainerColor = Color(0xFFF8E16C),
                 focusedBorderColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent
             ),
@@ -131,8 +135,8 @@ fun LoginScreen() {
                         .clickable { passwordVisible = !passwordVisible }
                 )
             },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                containerColor = Color(0xFFF8E16C),
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedContainerColor = Color(0xFFF8E16C),
                 focusedBorderColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent
             ),
@@ -191,5 +195,8 @@ fun LoginScreen() {
                 .clickable { /* sign-up code */ }
         )
 
+
+
     }
 }
+
