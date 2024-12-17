@@ -28,6 +28,12 @@
             android:exported="true"
             android:label="Feed Screen"
             android:theme="@style/Theme.Petnet" />
+
+        <activity
+            android:name=".SignUpScreen"
+            android:exported="true"
+            android:label="Sign Up Screen"
+            android:theme="@style/Theme.Petnet" />
     </application>
 
 </manifest>

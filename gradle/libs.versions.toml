@@ -18,6 +18,7 @@ uiTextGoogleFonts = "1.7.5"
 uiTooling = "1.7.6"
 uiToolingVersion = "1.6.0"
 uiVersion = "1.6.0"
+playServicesTagmanagerV4Impl = "18.1.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -44,6 +45,7 @@ androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "uiTooling" }
+play-services-tagmanager-v4-impl = { group = "com.google.android.gms", name = "play-services-tagmanager-v4-impl", version.ref = "playServicesTagmanagerV4Impl" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
