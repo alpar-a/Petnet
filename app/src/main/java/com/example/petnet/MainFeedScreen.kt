@@ -1,5 +1,6 @@
 package com.example.petnet
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -72,7 +73,11 @@ class MainFeedScreen : ComponentActivity() {
                                 },
                                 label = { Text("Home") },
                                 selected = true,
-                                onClick = { /* Home navigation */ }
+                                onClick = {
+                                    val intent = Intent(this@MainFeedScreen, MainActivity::class.java)
+                                    startActivity(intent)
+                                    finish() // Optional: Call `finish()` if you want to remove this activity from the back stack.
+                                }
                             )
                             NavigationBarItem(
                                 icon = {

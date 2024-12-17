@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -61,7 +62,7 @@ fun LoginScreen() {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -179,6 +180,26 @@ fun LoginScreen() {
             )
         }
 
+        Button(
+            onClick = {
+                val intent = Intent(context, MainFeedScreen::class.java)
+                context.startActivity(intent)
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = yellow),
+            shape = RoundedCornerShape(50),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp)
+                .height(56.dp)
+        ) {
+            Text(
+                text = "Direct to Feed",
+                color = Color(0xFFEB6423),
+                fontFamily = balootamma,
+                fontSize = 24.sp
+            )
+        }
+
         // Sign-Up
         Text(
             text = buildAnnotatedString {
@@ -194,7 +215,6 @@ fun LoginScreen() {
                 .padding(top = 64.dp)
                 .clickable { /* sign-up code */ }
         )
-
 
 
     }
