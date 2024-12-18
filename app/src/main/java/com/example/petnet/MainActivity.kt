@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.petnet.ui.theme.PetnetTheme
 
 val balootamma = FontFamily(Font(R.font.balootammaregular))
@@ -39,6 +40,7 @@ val yellow = Color(0xFFF8E16C)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
             PetnetTheme {

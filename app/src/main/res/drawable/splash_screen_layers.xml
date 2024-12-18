@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <!-- World Graphic Positioned at Bottom -->
+    <item>
+        <bitmap
+            android:gravity="bottom"
+            android:src="@drawable/world" /> <!-- Replace with your 'world graphic' image -->
+    </item>
+
+    <!-- Centered PetNet Logo -->
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/logo" /> <!-- Replace with your 'PetNet logo' image -->
+    </item>
+
+</layer-list>

@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.Petnet" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Use the Layered Drawable as Splash Screen Background -->
+        <item name="windowSplashScreenBackground">@drawable/splash_screen_layers</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="postSplashScreenTheme">@style/Theme.Petnet.App</item>
+    </style>
 
-    <style name="Theme.Petnet" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Petnet.App" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Theme for the App after Splash Screen -->
+    </style>
 </resources>

@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.espresso.core)
     implementation(libs.play.services.tagmanager.v4.impl)
+    implementation(libs.androidx.appcompat)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,5 +77,7 @@ dependencies {
     implementation(libs.material3)
     implementation("androidx.compose.material3:material3-window-size-class:1.2.0")
     implementation(libs.androidx.material.icons.extended.v160)
+    implementation(libs.androidx.core.splashscreen)
+
 
 }

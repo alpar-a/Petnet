@@ -1,5 +1,6 @@
 [versions]
 agp = "8.7.3"
+coreSplashscreen = "1.0.1"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -19,9 +20,11 @@ uiTooling = "1.7.6"
 uiToolingVersion = "1.6.0"
 uiVersion = "1.6.0"
 playServicesTagmanagerV4Impl = "18.1.1"
+appcompat = "1.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-material-icons-extended-v160 = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtendedVersion" }
@@ -46,6 +49,7 @@ material3 = { module = "androidx.compose.material3:material3", version.ref = "ma
 ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "uiTooling" }
 play-services-tagmanager-v4-impl = { group = "com.google.android.gms", name = "play-services-tagmanager-v4-impl", version.ref = "playServicesTagmanagerV4Impl" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
