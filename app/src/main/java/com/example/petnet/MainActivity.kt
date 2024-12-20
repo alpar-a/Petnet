@@ -161,7 +161,9 @@ fun LoginScreen() {
             modifier = Modifier
                 .align(Alignment.End)
                 .padding(top = 32.dp, bottom = 80.dp)
-                .clickable { /* forgot password code */ }
+                .clickable {
+                    val intent = Intent(context, ForgotPasswordScreen::class.java)
+                    context.startActivity(intent) }
         )
 
         // Sign-In

@@ -33,6 +33,12 @@
             android:exported="true"
             android:label="Sign Up Screen"
             android:theme="@style/Theme.Petnet" />
+
+        <activity
+            android:name=".ForgotPasswordScreen"
+            android:exported="true"
+            android:label="Sign Up Screen"
+            android:theme="@style/Theme.Petnet" />
     </application>
 
 </manifest>
