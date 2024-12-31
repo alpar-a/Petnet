@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "579959999042",
+    "project_id": "petnet-a0517",
+    "storage_bucket": "petnet-a0517.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:579959999042:android:f40062c7453d18da293bdb",
+        "android_client_info": {
+          "package_name": "com.example.petnet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_kRvSd-meGbBKm1cgvO-KNawlPA9pQkg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

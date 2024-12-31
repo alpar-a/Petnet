@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.android.application")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -78,6 +80,6 @@ dependencies {
     implementation("androidx.compose.material3:material3-window-size-class:1.2.0")
     implementation(libs.androidx.material.icons.extended.v160)
     implementation(libs.androidx.core.splashscreen)
-
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
 
 }
