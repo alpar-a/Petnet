@@ -80,5 +80,6 @@ dependencies {
     implementation(libs.androidx.material.icons.extended.v160)
     implementation(libs.androidx.core.splashscreen)
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation(libs.coil.compose)
 
 }
