@@ -5,28 +5,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.draw.clip
-
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Text
-import androidx.compose.ui.res.painterResource
 import com.example.petnet.ui.theme.PetnetTheme
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainFeedScreen : ComponentActivity() {
@@ -62,54 +53,13 @@ class MainFeedScreen : ComponentActivity() {
                             }
                         )
                     },
-                    bottomBar = {
-                        NavigationBar {
-                            NavigationBarItem(
-                                icon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_home),
-                                        contentDescription = "Home"
-                                    )
-                                },
-                                label = { Text("Home") },
-                                selected = true,
-                                onClick = {
-                                    val intent = Intent(this@MainFeedScreen, MainActivity::class.java)
-                                    startActivity(intent)
-                                    finish() // Optional: Call `finish()` if you want to remove this activity from the back stack.
-                                }
-                            )
-                            NavigationBarItem(
-                                icon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_calendar),
-                                        contentDescription = "Events"
-                                    )
-                                },
-                                label = { Text("Events") },
-                                selected = false,
-                                onClick = { /* Events navigation */ }
-                            )
-                            NavigationBarItem(
-                                icon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_add),
-                                        contentDescription = "Add"
-                                    )
-                                },
-                                label = { Text("Add") },
-                                selected = false,
-                                onClick = { /* Add navigation */ }
-                            )
-                        }
-                    },
+                    bottomBar = { BottomBar() }, // Fixed BottomBar
                     content = { padding ->
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(padding)
                         ) {
-                            // Example feed item
                             FeedItem(
                                 username = "@boncuk_gozluu",
                                 caption = "Biraz da burada yatayım dedim... #miskinlik #uykumodu",
@@ -160,6 +110,80 @@ fun FeedItem(username: String, caption: String, imageRes: Int) {
         Text(
             text = caption,
             modifier = Modifier.padding(top = 4.dp)
+        )
+    }
+}
+
+@Composable
+fun BottomBar() {
+    val context = LocalContext.current
+    NavigationBar {
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_home),
+                    contentDescription = "Home"
+                )
+            },
+            label = { Text("Home") },
+            selected = true,
+            onClick = {
+                val intent = Intent(context, MainActivity::class.java)
+                context.startActivity(intent)
+            }
+        )
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_calendar),
+                    contentDescription = "Events"
+                )
+            },
+            label = { Text("Events") },
+            selected = false,
+            onClick = {
+
+            }
+        )
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_add),
+                    contentDescription = "Photo"
+                )
+            },
+            label = { Text("Photo") },
+            selected = false,
+            onClick = {
+
+            }
+        )
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    painter = painterResource(R.drawable.sos),
+                    contentDescription = "sos"
+                )
+            },
+            label = { Text("S.O.S") },
+            selected = false,
+            onClick = {
+
+            }
+        )
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    painter = painterResource(R.drawable.profile),
+                    contentDescription = "Profile"
+                )
+            },
+            label = { Text("Profile") },
+            selected = false,
+            onClick = {
+                val intent = Intent(context, ProfileScreen::class.java)
+                context.startActivity(intent)
+            }
         )
     }
 }

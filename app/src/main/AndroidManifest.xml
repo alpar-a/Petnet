@@ -37,7 +37,13 @@
         <activity
             android:name=".ForgotPasswordScreen"
             android:exported="true"
-            android:label="Sign Up Screen"
+            android:label="Forgot Password Screen"
+            android:theme="@style/Theme.Petnet" />
+
+        <activity
+            android:name=".ProfileScreen"
+            android:exported="true"
+            android:label="Profile Screen"
             android:theme="@style/Theme.Petnet" />
     </application>
 
