@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,22 +24,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import coil.compose.AsyncImage
 import com.example.petnet.ui.theme.PetnetTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
-class ProfileScreen : ComponentActivity() {
+class EditProfileScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -73,14 +60,14 @@ class ProfileScreen : ComponentActivity() {
                             }
                         )
                     },
-                    bottomBar = { ProfileBottomBar() },
+                    bottomBar = { EditProfileBottomBar() },
                     content = { padding ->
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(padding)
                         ) {
-                            Profile()
+                            EditProfile()
                         }
                     }
                 )
@@ -90,92 +77,12 @@ class ProfileScreen : ComponentActivity() {
 }
 
 @Composable
-fun Profile() {
-    val context = LocalContext.current
-    Column(modifier = Modifier.padding(16.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painterResource(id = R.drawable.profpic),
-                contentDescription = "Profile Picture",
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
-            )
-            Spacer(Modifier.width(16.dp))
-            Column {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Veneta", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                    Spacer(Modifier.width(130.dp))
-                    Button(onClick = {
-                        val intent = Intent(context, EditProfileScreen::class.java)
-                        context.startActivity(intent) }, modifier = Modifier.height(30.dp),shape = RoundedCornerShape(8.dp),) {
-                        Text("EDIT", fontSize = 12.sp)
-                    }
-                }
-                Text("@Veneta_Moda", color = Color.Gray)
-                Text("Finnish Spitz, 1 years old // Female", modifier = Modifier.padding(top = 5.dp))
-            }
-        }
+fun EditProfile(){
 
-        Text("Moda ikonu", modifier = Modifier.padding(top = 8.dp))
-
-        Row(
-            modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            ProfileStat("62", "Posts")
-            ProfileStat("1852", "Followers")
-            ProfileStat("2100", "Following")
-        }
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-
-            val imageUrls = listOf(
-                "https://example.com/image1.jpg",
-                "https://example.com/image2.jpg",
-                "https://example.com/image3.jpg",
-                "https://example.com/image4.jpg",
-                "https://example.com/image5.jpg",
-                "https://example.com/image6.jpg",
-            )
-
-            items(imageUrls) { imageUrl ->
-                ImageGridItem(imageUrl = imageUrl)
-            }
-        }
-    }
 }
 
 @Composable
-fun ProfileStat(count: String, label: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(count, fontWeight = FontWeight.Bold)
-        Text(label, fontSize = 12.sp)
-    }
-}
-
-@Composable
-fun ImageGridItem(imageUrl: String) {
-    Card(Modifier.aspectRatio(1f)) {
-        AsyncImage(
-            model = imageUrl,
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-            placeholder = painterResource(id = R.drawable.world),
-        )
-    }
-}
-
-@Composable
-fun ProfileBottomBar() {
+fun EditProfileBottomBar() {
     val context = LocalContext.current
     NavigationBar {
         NavigationBarItem(
