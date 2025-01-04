@@ -51,6 +51,12 @@
             android:exported="true"
             android:label="Edit Profile Screen"
             android:theme="@style/Theme.Petnet" />
+
+        <activity
+            android:name=".MenuScreen"
+            android:exported="true"
+            android:label="Menu Screen"
+            android:theme="@style/Theme.Petnet" />
     </application>
 
 </manifest>

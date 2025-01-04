@@ -4,13 +4,23 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -18,43 +28,33 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import coil.compose.AsyncImage
 import com.example.petnet.ui.theme.PetnetTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
-class ProfileScreen : ComponentActivity() {
+class MenuScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             PetnetTheme {
                 Scaffold(
-                    topBar = { ProfileTopBar() },
-                    bottomBar = { ProfileBottomBar() },
+                    topBar = { MenuTopBar() },
+                    bottomBar = { MenuBottomBar() },
                     content = { padding ->
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(padding)
                         ) {
-                            Profile()
+                            Menu()
                         }
                     }
                 )
@@ -62,9 +62,129 @@ class ProfileScreen : ComponentActivity() {
         }
     }
 }
+
+@Composable
+fun Menu() {
+    val context = LocalContext.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Back Button Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = { (context as? ComponentActivity)?.finish() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.back),
+                    contentDescription = "Back"
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+        }
+
+        // Profile Picture
+        Image(
+            painter = painterResource(id = R.drawable.profpic),
+            contentDescription = "Profile Picture",
+            modifier = Modifier
+                .size(100.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.background)
+                .border(2.dp, Color.Gray, CircleShape)
+        )
+
+        // Profile Title
+        Text(
+            text = "My Profile",
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp,
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .clickable {
+                    val intent = Intent(context, ProfileScreen::class.java)
+                    context.startActivity(intent)
+                },
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        // Divider
+        Divider(
+            color = Color.Gray,
+            thickness = 1.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp)
+        )
+
+        // Menu Items
+        MenuButton(
+            text = "Vet Locations",
+            onClick = {
+                /*val intent = Intent(context, VetLocationsScreen::class.java)
+                context.startActivity(intent)*/
+            }
+        )
+        ShortDivider()
+        MenuButton(
+            text = "Ask Vet",
+            onClick = {
+                /*val intent = Intent(context, AskVetScreen::class.java)
+                context.startActivity(intent)*/
+            }
+        )
+        ShortDivider()
+        MenuButton(
+            text = "Settings",
+            onClick = {
+                /*val intent = Intent(context, SettingsScreen::class.java)
+                context.startActivity(intent)*/
+            }
+        )
+        ShortDivider()
+        MenuButton(
+            text = "Contact",
+            onClick = {
+                /*val intent = Intent(context, ContactScreen::class.java)
+                context.startActivity(intent)*/
+            }
+        )
+    }
+}
+
+@Composable
+fun MenuButton(text: String, onClick: () -> Unit) {
+    Text(
+        text = text,
+        fontSize = 18.sp,
+        fontWeight = FontWeight.Medium,
+        modifier = Modifier
+            .padding(vertical = 8.dp)
+            .clickable(onClick = onClick),
+        color = MaterialTheme.colorScheme.primary
+    )
+}
+
+@Composable
+fun ShortDivider() {
+    Divider(
+        color = Color.Gray,
+        thickness = 1.dp,
+        modifier = Modifier
+            .padding(horizontal = 50.dp, vertical = 8.dp)
+    )
+}
+
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileTopBar() {
+fun MenuTopBar() {
     val context = LocalContext.current
     TopAppBar(
         title = {
@@ -97,92 +217,7 @@ fun ProfileTopBar() {
 }
 
 @Composable
-fun Profile() {
-    val context = LocalContext.current
-    Column(modifier = Modifier.padding(16.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painterResource(id = R.drawable.profpic),
-                contentDescription = "Profile Picture",
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
-            )
-            Spacer(Modifier.width(16.dp))
-            Column {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Veneta", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                    Spacer(Modifier.width(130.dp))
-                    Button(onClick = {
-                        val intent = Intent(context, EditProfileScreen::class.java)
-                        context.startActivity(intent) }, modifier = Modifier.height(30.dp),shape = RoundedCornerShape(8.dp),) {
-                        Text("EDIT", fontSize = 12.sp)
-                    }
-                }
-                Text("@Veneta_Moda", color = Color.Gray)
-                Text("Finnish Spitz, 1 years old // Female", modifier = Modifier.padding(top = 5.dp))
-            }
-        }
-
-        Text("Moda ikonu", modifier = Modifier.padding(top = 8.dp))
-
-        Row(
-            modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            ProfileStat("62", "Posts")
-            ProfileStat("1852", "Followers")
-            ProfileStat("2100", "Following")
-        }
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-
-            val imageUrls = listOf(
-                "https://example.com/image1.jpg",
-                "https://example.com/image2.jpg",
-                "https://example.com/image3.jpg",
-                "https://example.com/image4.jpg",
-                "https://example.com/image5.jpg",
-                "https://example.com/image6.jpg",
-            )
-
-            items(imageUrls) { imageUrl ->
-                ImageGridItem(imageUrl = imageUrl)
-            }
-        }
-    }
-}
-
-@Composable
-fun ProfileStat(count: String, label: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(count, fontWeight = FontWeight.Bold)
-        Text(label, fontSize = 12.sp)
-    }
-}
-
-@Composable
-fun ImageGridItem(imageUrl: String) {
-    Card(Modifier.aspectRatio(1f)) {
-        AsyncImage(
-            model = imageUrl,
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-            placeholder = painterResource(id = R.drawable.world),
-        )
-    }
-}
-
-@Composable
-fun ProfileBottomBar() {
+fun MenuBottomBar() {
     val context = LocalContext.current
     NavigationBar {
         NavigationBarItem(

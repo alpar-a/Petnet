@@ -52,33 +52,7 @@ class EditProfileScreen : ComponentActivity() {
         setContent {
             PetnetTheme {
                 Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            title = {
-                                Text(
-                                    text = "PetNet",
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 24.sp
-                                )
-                            },
-                            navigationIcon = {
-                                IconButton(onClick = { /* Search action */ }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_search),
-                                        contentDescription = "Search"
-                                    )
-                                }
-                            },
-                            actions = {
-                                IconButton(onClick = { /* Menu action */ }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_menu),
-                                        contentDescription = "Menu"
-                                    )
-                                }
-                            }
-                        )
-                    },
+                    topBar = { EditTopBar() },
                     bottomBar = { EditProfileBottomBar() },
                     content = { padding ->
                         Column(
@@ -93,6 +67,40 @@ class EditProfileScreen : ComponentActivity() {
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditTopBar() {
+    val context = LocalContext.current
+    TopAppBar(
+        title = {
+            Text(
+                text = "PetNet",
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = { /* Search action */ }) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_search),
+                    contentDescription = "Search"
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = {
+                val intent = Intent(context, MenuScreen::class.java)
+                context.startActivity(intent)
+            }) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_menu),
+                    contentDescription = "Menu"
+                )
+            }
+        }
+    )
 }
 
 @Composable
