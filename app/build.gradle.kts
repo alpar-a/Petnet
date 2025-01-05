@@ -42,6 +42,13 @@ android {
 
 dependencies {
 
+    // Import the BoM for the Firebase platform
+    implementation(platform(libs.firebase.bom))
+
+    // Add the dependency for the Cloud Storage library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation(libs.firebase.storage)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -54,6 +61,7 @@ dependencies {
     implementation(libs.androidx.espresso.core)
     implementation(libs.play.services.tagmanager.v4.impl)
     implementation(libs.androidx.appcompat)
+    implementation(libs.firebase.common.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,10 +84,12 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
 
     implementation(libs.material3)
-    implementation("androidx.compose.material3:material3-window-size-class:1.2.0")
     implementation(libs.androidx.material.icons.extended.v160)
     implementation(libs.androidx.core.splashscreen)
-    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation(libs.coil.compose)
 
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.database.ktx)
+    implementation(libs.firebase.storage.ktx)
+    implementation(libs.coil.compose.v222)
 }

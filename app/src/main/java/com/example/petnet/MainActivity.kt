@@ -34,12 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.petnet.ui.theme.PetnetTheme
+import com.google.firebase.FirebaseApp
 
 val balootamma = FontFamily(Font(R.font.balootammaregular))
 val yellow = Color(0xFFF8E16C)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        FirebaseApp.initializeApp(this)
         installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
