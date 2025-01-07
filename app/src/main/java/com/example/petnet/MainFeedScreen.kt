@@ -1,9 +1,13 @@
 package com.example.petnet
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -29,24 +33,69 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import coil.compose.rememberAsyncImagePainter
 import androidx.compose.ui.layout.ContentScale
-
+import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.google.firebase.firestore.FirebaseFirestore
 @OptIn(ExperimentalMaterial3Api::class)
+
 class MainFeedScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         FirebaseApp.initializeApp(this)
         super.onCreate(savedInstanceState)
         setContent {
             PetnetTheme {
+                val navController = rememberNavController() // Initialize NavController
                 Scaffold(
                     topBar = { TopBar() },
-                    bottomBar = { BottomBar() },
+                    bottomBar = { BottomBar(navController) },
                     content = { padding ->
-                        FeedContent(padding)
+                        NavigationHost(padding)
                     }
                 )
             }
         }
     }
+}
+
+@Composable
+fun NavigationHost(padding: PaddingValues) {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = "feed" // Set your starting screen
+    ) {
+        composable("feed") { FeedContent(padding) }
+        composable("gallerySelection") { GallerySelectionScreen() }
+        // Add other screens as needed
+    }
+}
+
+fun addFeedItem(
+    username: String,
+    caption: String,
+    imageUrl: String,
+    profilePictureUrl: String
+) {
+    val db = FirebaseFirestore.getInstance()
+    val feedItem = hashMapOf(
+        "username" to username,
+        "caption" to caption,
+        "imageUrl" to imageUrl,
+        "profilePictureUrl" to profilePictureUrl
+    )
+
+    db.collection("feed")
+        .add(feedItem)
+        .addOnSuccessListener {
+            println("Feed item added successfully!")
+        }
+        .addOnFailureListener { e ->
+            println("Error adding feed item: ${e.message}")
+        }
 }
 
 @Composable
@@ -95,7 +144,7 @@ fun FeedImageItem(imageUrl: String) {
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp),
+                .height(300.dp),
             contentScale = ContentScale.Crop
         )
     }
@@ -218,8 +267,19 @@ fun FeedItem(username: String, caption: String, imageRes: Int) {
 }
 
 @Composable
-fun BottomBar() {
+fun BottomBar(navController: NavController) {
     val context = LocalContext.current
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (!isGranted) {
+            Toast.makeText(
+                context,
+                "Storage permission is required to access photos.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
     NavigationBar {
         NavigationBarItem(
             icon = {
@@ -230,10 +290,7 @@ fun BottomBar() {
             },
             label = { Text("Home") },
             selected = true,
-            onClick = {
-                val intent = Intent(context, MainActivity::class.java)
-                context.startActivity(intent)
-            }
+            onClick = { navController.navigate("feed") }
         )
         NavigationBarItem(
             icon = {
@@ -256,9 +313,17 @@ fun BottomBar() {
                 )
             },
             label = { Text("Photo") },
-            selected = false,
+            selected = navController.currentDestination?.route == "gallerySelection",
             onClick = {
-
+                if (ContextCompat.checkSelfPermission(
+                        context,
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    navController.navigate("gallerySelection")
+                } else {
+                    permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                }
             }
         )
         NavigationBarItem(

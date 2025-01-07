@@ -222,7 +222,6 @@ fun ProfileBottomBar() {
             label = { Text("Photo") },
             selected = false,
             onClick = {
-
             }
         )
         NavigationBarItem(

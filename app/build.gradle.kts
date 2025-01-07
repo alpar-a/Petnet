@@ -19,6 +19,13 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.get()
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -34,9 +41,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
-    }
-    buildFeatures {
-        compose = true
     }
 }
 
@@ -62,6 +66,8 @@ dependencies {
     implementation(libs.play.services.tagmanager.v4.impl)
     implementation(libs.androidx.appcompat)
     implementation(libs.firebase.common.ktx)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.androidx.recyclerview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -86,10 +92,42 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.androidx.material.icons.extended.v160)
     implementation(libs.androidx.core.splashscreen)
-    implementation(libs.coil.compose)
+        implementation(libs.coil.compose)
 
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.database.ktx)
     implementation(libs.firebase.storage.ktx)
     implementation(libs.coil.compose.v222)
+
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.lifecycle.runtime.compose) // Fix for 'viewModel'
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.coil.compose)
+
+    // ViewModel support
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // Ensure these match your Compose BOM version
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.runtime.v143)
+    implementation ("com.github.bumptech.glide:glide:4.14.2@aar")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
+
+    // Jetpack Compose
+    implementation(libs.androidx.ui.v160)
+    implementation (libs.androidx.material3.v120)
+    implementation (libs.ui.tooling.preview)
+
+// Coil for image loading
+    implementation (libs.coil.compose)
+    implementation (libs.androidx.navigation.compose)
+    implementation (libs.androidx.navigation.fragment.ktx)
+    implementation ("androidx.navigation:navigation-runtime-ktx:2.8.5")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.8.5")
+    implementation (libs.androidx.navigation.compose.v260)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation (libs.androidx.lifecycle.viewmodel.compose.v260)
+
+
 }

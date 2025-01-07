@@ -45,6 +45,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
+            MainActivityContent()
             PetnetTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
