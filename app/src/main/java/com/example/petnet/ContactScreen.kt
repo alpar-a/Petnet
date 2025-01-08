@@ -1,5 +1,6 @@
 package com.example.petnet
 
+
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -38,23 +39,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.petnet.ui.theme.PetnetTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.TextField
+
 
 @OptIn(ExperimentalMaterial3Api::class)
-class MenuScreen : ComponentActivity() {
+class ContactScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             PetnetTheme {
                 Scaffold(
-                    topBar = { MenuTopBar() },
-                    bottomBar = { MenuBottomBar() },
+                    topBar = { ContactTopBar() },
+                    bottomBar = { ContactBottomBar() },
                     content = { padding ->
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(padding)
                         ) {
-                            Menu()
+                            Contact()
                         }
                     }
                 )
@@ -64,127 +73,108 @@ class MenuScreen : ComponentActivity() {
 }
 
 @Composable
-fun Menu() {
-    val context = LocalContext.current
-
+fun Contact() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp)
+            .background(Color.White)
     ) {
-        // Back Button Row
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = { (context as? ComponentActivity)?.finish() }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.back),
-                    contentDescription = "Back"
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
-        }
-
-        // Profile Picture
-        Image(
-            painter = painterResource(id = R.drawable.profpic),
-            contentDescription = "Profile Picture",
-            modifier = Modifier
-                .size(100.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.background)
-                .border(2.dp, Color.Gray, CircleShape)
-        )
-
-        // Profile Title
+        // Contact Us Header
         Text(
-            text = "My Profile",
+            text = "Contact us",
             fontWeight = FontWeight.Bold,
-            fontSize = 22.sp,
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .clickable {
-                    val intent = Intent(context, ProfileScreen::class.java)
-                    context.startActivity(intent)
-                },
-            color = MaterialTheme.colorScheme.primary
+            fontSize = 20.sp,
+            modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        // Divider
-        Divider(
-            color = Color.Gray,
-            thickness = 1.dp,
+        // Email and Phone
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp)
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text(text = "Email", fontWeight = FontWeight.Bold)
+                Text(text = "petnet@mail.com")
+            }
+            Column {
+                Text(text = "Phone Number", fontWeight = FontWeight.Bold)
+                Text(text = "+90 500 000 00 00")
+            }
+        }
+
+        // Name Input
+        TextField(
+            value = "",
+            onValueChange = {},
+            label = { Text("Name") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
         )
 
-        // Menu Items
-        MenuButton(
-            text = "Vet Locations",
-            onClick = {
-                /*val intent = Intent(context, VetLocationsScreen::class.java)
-                context.startActivity(intent)*/
-            }
+        // Email Input
+        TextField(
+            value = "",
+            onValueChange = {},
+            label = { Text("Email") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
         )
-        ShortDivider()
-        MenuButton(
-            text = "Ask Vet",
-            onClick = {
-                /*val intent = Intent(context, AskVetScreen::class.java)
-                context.startActivity(intent)*/
-            }
+
+        // Phone Input
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            TextField(
+                value = "",
+                onValueChange = {},
+                label = { Text("Code") },
+                modifier = Modifier.weight(1f)
+            )
+            Spacer(modifier = Modifier.size(8.dp))
+            TextField(
+                value = "",
+                onValueChange = {},
+                label = { Text("Phone Number") },
+                modifier = Modifier.weight(2f)
+            )
+        }
+
+        // Message Input
+        TextField(
+            value = "",
+            onValueChange = {},
+            label = { Text("Message") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
         )
-        ShortDivider()
-        MenuButton(
-            text = "Settings",
-            onClick = {
-                /*val intent = Intent(context, SettingsScreen::class.java)
-                context.startActivity(intent)*/
-            }
-        )
-        ShortDivider()
-        MenuButton(
-            text = "Contact",
-            onClick = {
-                val intent = Intent(context, ContactScreen::class.java)
-                context.startActivity(intent)
-            }
-        )
+
+        // Submit Button
+        Button(
+            onClick = { /* Handle Submit */ },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC107))
+        ) {
+            Text(text = "Submit", color = Color.White)
+        }
     }
 }
-
-@Composable
-fun MenuButton(text: String, onClick: () -> Unit) {
-    Text(
-        text = text,
-        fontSize = 18.sp,
-        fontWeight = FontWeight.Medium,
-        modifier = Modifier
-            .padding(vertical = 8.dp)
-            .clickable(onClick = onClick),
-        color = MaterialTheme.colorScheme.primary
-    )
-}
-
-@Composable
-fun ShortDivider() {
-    Divider(
-        color = Color.Gray,
-        thickness = 1.dp,
-        modifier = Modifier
-            .padding(horizontal = 50.dp, vertical = 8.dp)
-    )
-}
-
 
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuTopBar() {
+fun ContactTopBar() {
     val context = LocalContext.current
     TopAppBar(
         title = {
@@ -217,7 +207,7 @@ fun MenuTopBar() {
 }
 
 @Composable
-fun MenuBottomBar() {
+fun ContactBottomBar() {
     val context = LocalContext.current
     NavigationBar {
         NavigationBarItem(

@@ -63,6 +63,14 @@
             android:exported="true"
             android:label="Menu Screen"
             android:theme="@style/Theme.Petnet" />
+
+        <activity
+            android:name=".ContactScreen"
+            android:exported="true"
+            android:label="ContactScreen"
+            android:theme="@style/Theme.Petnet" />
+
     </application>
+
 
 </manifest>
