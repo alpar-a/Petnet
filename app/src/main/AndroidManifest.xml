@@ -70,6 +70,13 @@
             android:label="ContactScreen"
             android:theme="@style/Theme.Petnet" />
 
+        <activity
+            android:name=".SettingsScreen"
+            android:exported="true"
+            android:label="Settings Screen"
+            android:theme="@style/Theme.Petnet" />
+
+
     </application>
 
 

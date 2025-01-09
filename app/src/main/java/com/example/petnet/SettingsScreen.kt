@@ -40,21 +40,21 @@ import androidx.compose.ui.unit.sp
 import com.example.petnet.ui.theme.PetnetTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
-class MenuScreen : ComponentActivity() {
+class SettingsScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             PetnetTheme {
                 Scaffold(
-                    topBar = { MenuTopBar() },
-                    bottomBar = { MenuBottomBar() },
+                    topBar = { SettingsTopBar() },
+                    bottomBar = { SettingsBottomBar() },
                     content = { padding ->
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(padding)
                         ) {
-                            Menu()
+                            Settings()
                         }
                     }
                 )
@@ -64,17 +64,13 @@ class MenuScreen : ComponentActivity() {
 }
 
 @Composable
-fun Menu() {
+fun Settings() {
     val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp)
     ) {
-        // Back Button Row
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -88,104 +84,108 @@ fun Menu() {
             Spacer(modifier = Modifier.weight(1f))
         }
 
-        // Profile Picture
-        Image(
-            painter = painterResource(id = R.drawable.profpic),
-            contentDescription = "Profile Picture",
-            modifier = Modifier
-                .size(100.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.background)
-                .border(2.dp, Color.Gray, CircleShape)
-        )
-
-        // Profile Title
-        Text(
-            text = "My Profile",
-            fontWeight = FontWeight.Bold,
-            fontSize = 22.sp,
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .clickable {
-                    val intent = Intent(context, ProfileScreen::class.java)
-                    context.startActivity(intent)
-                },
-            color = MaterialTheme.colorScheme.primary
-        )
-
-        // Divider
-        Divider(
-            color = Color.Gray,
-            thickness = 1.dp,
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp)
-        )
+                .clickable { /* Display settings action */ }
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.display_settings),
+                contentDescription = "Display Settings",
+                tint = Color.Black,
+                modifier = Modifier
+                    .size(30.dp) // İkon boyutunu ayarlar
+                    .padding(start = 42.dp, top = 182.dp) // Sol ve üst boşluğu ekler
+            )
 
-        // Menu Items
-        MenuButton(
-            text = "Vet Locations",
-            onClick = {
-                /*val intent = Intent(context, VetLocationsScreen::class.java)
-                context.startActivity(intent)*/
-            }
-        )
-        ShortDivider()
-        MenuButton(
-            text = "Ask Vet",
-            onClick = {
-                /*val intent = Intent(context, AskVetScreen::class.java)
-                context.startActivity(intent)*/
-            }
-        )
-        ShortDivider()
-        MenuButton(
-            text = "Settings",
-            onClick = {
-                val intent = Intent(context, SettingsScreen::class.java)
-                context.startActivity(intent)
-            }
-        )
-        ShortDivider()
-        MenuButton(
-            text = "Contact",
-            onClick = {
-                val intent = Intent(context, ContactScreen::class.java)
-                context.startActivity(intent)
-            }
-        )
+            Spacer(modifier = Modifier.size(16.dp))
+            Text(
+                text = "Display Settings",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal,
+                color = Color.Black
+            )
+        }
+
+
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { /* Exit action */ }
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.exit),
+                contentDescription = "",
+                tint = Color.Black,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.size(16.dp))
+            Text(
+                text = "Exit",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal,
+                color = Color.Black
+            )
+        }
+
+
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { /* Sign-out action */ }
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.sign_out),
+                contentDescription = "Sign-out",
+                tint = Color.Black,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.size(16.dp))
+            Text(
+                text = "Sign-out",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal,
+                color = Color.Black
+            )
+        }
+
+
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { /* Delete account action */ }
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.delete_account),
+                contentDescription = "Delete Account",
+                tint = Color.Red,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.size(16.dp))
+            Text(
+                text = "Delete Account",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal,
+                color = Color.Red
+            )
+        }
     }
 }
 
-@Composable
-fun MenuButton(text: String, onClick: () -> Unit) {
-    Text(
-        text = text,
-        fontSize = 18.sp,
-        fontWeight = FontWeight.Medium,
-        modifier = Modifier
-            .padding(vertical = 8.dp)
-            .clickable(onClick = onClick),
-        color = MaterialTheme.colorScheme.primary
-    )
-}
-
-@Composable
-fun ShortDivider() {
-    Divider(
-        color = Color.Gray,
-        thickness = 1.dp,
-        modifier = Modifier
-            .padding(horizontal = 50.dp, vertical = 8.dp)
-    )
-}
-
-
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuTopBar() {
+fun SettingsTopBar() {
     val context = LocalContext.current
     TopAppBar(
         title = {
@@ -218,7 +218,7 @@ fun MenuTopBar() {
 }
 
 @Composable
-fun MenuBottomBar() {
+fun SettingsBottomBar() {
     val context = LocalContext.current
     NavigationBar {
         NavigationBarItem(
