@@ -336,7 +336,8 @@ fun BottomBar(navController: NavController) {
             label = { Text("S.O.S") },
             selected = false,
             onClick = {
-
+                val intent = Intent(context, SOSScreen::class.java)
+                context.startActivity(intent)
             }
         )
         NavigationBarItem(

@@ -94,6 +94,12 @@
             android:exported="true"
             android:label="Delete Account Screen"
             android:theme="@style/Theme.Petnet" />
+
+        <activity
+            android:name=".SOSScreen"
+            android:exported="true"
+            android:label="SOS Screen"
+            android:theme="@style/Theme.Petnet"/>
     </application>
 
 
