@@ -162,7 +162,10 @@ fun Settings() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /* Delete account action */ }
+                .clickable {
+                    val intent = Intent(context, DeleteAccountScreen::class.java)
+                    context.startActivity(intent)
+                }
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

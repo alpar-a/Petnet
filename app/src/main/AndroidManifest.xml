@@ -21,6 +21,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Petnet"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC5_nPVbSzDsLD_qupNfkfYX3AQZvSofio" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -83,6 +87,12 @@
             android:name=".VetLocationsScreen"
             android:exported="true"
             android:label="Vet Locations Screen"
+            android:theme="@style/Theme.Petnet" />
+
+        <activity
+            android:name=".DeleteAccountScreen"
+            android:exported="true"
+            android:label="Delete Account Screen"
             android:theme="@style/Theme.Petnet" />
     </application>
 

@@ -8,14 +8,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.example.petnet.ui.theme.PetnetTheme
@@ -114,9 +120,9 @@ fun VetLocationsTopBar() {
             )
         },
         navigationIcon = {
-            IconButton(onClick = { /* Search action */ }) {
+            IconButton(onClick = { (context as? ComponentActivity)?.finish() }) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_search),
+                    painter = painterResource(R.drawable.back),
                     contentDescription = "Search"
                 )
             }
