@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,7 +21,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.example.petnet.ui.theme.PetnetTheme
 import androidx.compose.material3.TextField
-import androidx.compose.material3.OutlinedTextField // Bu satırı ekleyin
+import androidx.compose.material3.OutlinedTextField
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,7 +60,6 @@ fun Contact() {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .background(Color.White)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -70,7 +68,8 @@ fun Contact() {
             IconButton(onClick = { (context as? ComponentActivity)?.finish() }) {
                 Icon(
                     painter = painterResource(id = R.drawable.back),
-                    contentDescription = "Back"
+                    contentDescription = "Back",
+                    modifier = Modifier.size(30.dp).padding(start = 10.dp)
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
@@ -78,21 +77,27 @@ fun Contact() {
 
         Text(
             text = "Contact us",
+            fontSize = 16.sp,
+            color = Color(0xFFEB6423),
             fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            modifier = Modifier.padding(bottom = 8.dp)
+            fontFamily = nunito,
+            modifier = Modifier.padding(start = 20.dp)
         )
 
         // Email and Phone
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .padding(vertical = 16.dp, horizontal = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(text = "Email", fontWeight = FontWeight.Bold)
+                Text(text = "Email",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = Color(0xFFEB6423),
+                    fontFamily = nunito,)
                 Text(text = "petnet@mail.com")
             }
             Divider(
@@ -103,7 +108,11 @@ fun Contact() {
                     .padding(horizontal = 8.dp)
             )
             Column {
-                Text(text = "Phone Number", fontWeight = FontWeight.Bold)
+                Text(text = "Phone Number",
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFEB6423),
+                    fontSize = 14.sp,
+                    fontFamily = nunito,)
                 Text(text = "+90 500 000 00 00")
             }
         }
@@ -112,18 +121,22 @@ fun Contact() {
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            placeholder = { Text("Name", color = Color.Black, fontSize = 18.sp) },
+            placeholder = { Text("Name",
+                color = bl,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = nunito) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black,
-                cursorColor = Color.Black
+                focusedBorderColor = Color.Gray,
+                unfocusedBorderColor = Color.Gray,
+                cursorColor = Color.Gray
             ),
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .padding(vertical = 8.dp)
                 .height(64.dp)
         )
 
@@ -131,18 +144,22 @@ fun Contact() {
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            placeholder = { Text("Email", color = Color.Black, fontSize = 18.sp) },
+            placeholder = { Text("Email",
+                color = bl,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = nunito) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black,
-                cursorColor = Color.Black
+                focusedBorderColor = Color.Gray,
+                unfocusedBorderColor = Color.Gray,
+                cursorColor = Color.Gray
             ),
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .padding(vertical = 8.dp)
                 .height(64.dp)
         )
 
@@ -156,9 +173,11 @@ fun Contact() {
             OutlinedTextField(
                 value = code,
                 onValueChange = { code = it },
-                placeholder = {
-                    Text("Code", color = Color.Gray, fontSize = 18.sp)
-                },
+                placeholder = { Text("Code",
+                    color = bl,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = nunito) },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White,
@@ -176,9 +195,11 @@ fun Contact() {
             OutlinedTextField(
                 value = phoneNumber,
                 onValueChange = { phoneNumber = it },
-                placeholder = {
-                    Text("Phone Number", color = Color.Gray, fontSize = 18.sp)
-                },
+                placeholder = { Text("Phone Number",
+                    color = bl,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = nunito) },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White,
@@ -198,25 +219,51 @@ fun Contact() {
         OutlinedTextField(
             value = "",
             onValueChange = {},
-            label = { Text("Message") },
+            placeholder = { Text("Message...",
+                color = bl,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = nunito) },
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                focusedBorderColor = Color.Gray,
+                unfocusedBorderColor = Color.Gray,
+                cursorColor = Color.Black
+            ),
             modifier = Modifier
                 .fillMaxWidth()
+                .height(200.dp)
                 .padding(bottom = 16.dp)
         )
 
         // Submit Button
-        Button(
-            onClick = {
-                val intent = Intent(context, MainFeedScreen::class.java)
-                context.startActivity(intent)
-            },
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC107))
+                .fillMaxSize()
         ) {
-            Text(text = "Submit", color = Color.White)
+            Button(
+                onClick = {
+                    val intent = Intent(context, MainFeedScreen::class.java)
+                    context.startActivity(intent)
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = yellow),
+                shape = RoundedCornerShape(50),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .width(200.dp)
+                    .height(56.dp)
+            ) {
+                Text(
+                    text = "Submit",
+                    color = Color(0xFFEB6423),
+                    fontFamily = balootamma,
+                    fontSize = 24.sp
+                )
+            }
         }
+
     }
 }
 
