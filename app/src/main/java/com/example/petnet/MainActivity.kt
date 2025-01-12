@@ -40,6 +40,7 @@ val balootamma = FontFamily(Font(R.font.balootammaregular))
 val nunito = FontFamily(Font(R.font.nunitosans))
 val yellow = Color(0xFFF8E16C)
 val bl = Color(0xFF323232)
+val blu = Color(0xFFA3D9FF)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
