@@ -83,7 +83,7 @@ fun Settings() {
             }
             Spacer(modifier = Modifier.weight(1f))
         }
-
+/*
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -96,8 +96,8 @@ fun Settings() {
                 contentDescription = "Display Settings",
                 tint = Color.Black,
                 modifier = Modifier
-                    .size(30.dp) // İkon boyutunu ayarlar
-                    .padding(start = 42.dp, top = 182.dp) // Sol ve üst boşluğu ekler
+                    .size(30.dp)
+                    .padding(start = 42.dp, top = 182.dp)
             )
 
             Spacer(modifier = Modifier.size(16.dp))
@@ -108,7 +108,7 @@ fun Settings() {
                 color = Color.Black
             )
         }
-
+*/
 
 
         Row(

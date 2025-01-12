@@ -126,8 +126,8 @@ fun Menu() {
         MenuButton(
             text = "Vet Locations",
             onClick = {
-                /*val intent = Intent(context, VetLocationsScreen::class.java)
-                context.startActivity(intent)*/
+                val intent = Intent(context, VetLocationsScreen::class.java)
+                context.startActivity(intent)
             }
         )
         ShortDivider()
@@ -282,7 +282,7 @@ fun MenuBottomBar() {
                 )
             },
             label = { Text("Profile") },
-            selected = true,
+            selected = false,
             onClick = {
                 val intent = Intent(context, ProfileScreen::class.java)
                 context.startActivity(intent)

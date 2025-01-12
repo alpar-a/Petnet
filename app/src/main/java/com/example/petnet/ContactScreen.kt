@@ -74,12 +74,25 @@ class ContactScreen : ComponentActivity() {
 
 @Composable
 fun Contact() {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
             .background(Color.White)
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = { (context as? ComponentActivity)?.finish() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.back),
+                    contentDescription = "Back"
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+        }
         // Contact Us Header
         Text(
             text = "Contact us",
@@ -159,7 +172,10 @@ fun Contact() {
 
         // Submit Button
         Button(
-            onClick = { /* Handle Submit */ },
+            onClick = {
+                val intent = Intent(context, MainFeedScreen::class.java)
+                context.startActivity(intent)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp),

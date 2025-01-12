@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.firebase.common.ktx)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -129,5 +130,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation (libs.androidx.lifecycle.viewmodel.compose.v260)
 
-
+    implementation("com.google.android.gms:play-services-maps:3.5.0")
+    implementation("com.google.maps.android:maps-compose:2.13.1")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 }
