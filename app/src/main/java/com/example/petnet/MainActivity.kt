@@ -37,7 +37,9 @@ import com.example.petnet.ui.theme.PetnetTheme
 import com.google.firebase.FirebaseApp
 
 val balootamma = FontFamily(Font(R.font.balootammaregular))
+val nunito = FontFamily(Font(R.font.nunitosans))
 val yellow = Color(0xFFF8E16C)
+val bl = Color(0xFF323232)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
