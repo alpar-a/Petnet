@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import coil.compose.AsyncImagePainter.State.Empty.painter
 import com.example.petnet.ui.theme.PetnetTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -105,7 +106,12 @@ fun DeleteAccountContent(modifier: Modifier = Modifier) {
                 Text("Username or Email", color = Color.Gray, fontSize = 18.sp)
             },
             leadingIcon = {
-                Icon(Icons.Default.Email, contentDescription = null, tint = Color.Gray)
+                Icon(
+                    painter = painterResource(id = R.drawable.namebar),
+                    contentDescription = null,
+                    tint = Color.Gray,
+                    modifier = Modifier.size(28.dp)
+                )
             },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = Color.White,
@@ -135,7 +141,7 @@ fun DeleteAccountContent(modifier: Modifier = Modifier) {
             },
             trailingIcon = {
                 val visibilityIcon =
-                    if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
+                    if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility
                 Icon(
                     imageVector = visibilityIcon,
                     contentDescription = if (passwordVisible) "Hide password" else "Show password",
