@@ -133,4 +133,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:3.5.0")
     implementation("com.google.maps.android:maps-compose:2.13.1")
     implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.google.android.libraries.places:places:3.1.0")
+    implementation ("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation ("org.json:json:20210307")
+
 }

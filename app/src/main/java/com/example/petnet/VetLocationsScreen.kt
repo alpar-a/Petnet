@@ -8,20 +8,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.json.JSONObject
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.example.petnet.ui.theme.PetnetTheme
@@ -29,6 +25,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
+import kotlinx.coroutines.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 class VetLocationsScreen : ComponentActivity() {
@@ -52,11 +49,17 @@ class VetLocationsScreen : ComponentActivity() {
 fun LocationScreen(modifier: Modifier = Modifier) {
     var userLatitude by remember { mutableStateOf(0.0) }
     var userLongitude by remember { mutableStateOf(0.0) }
+    var vetLocations by remember { mutableStateOf(listOf<LatLng>()) }
 
     // Fetch user location
     UserLocation { latitude, longitude ->
         userLatitude = latitude
         userLongitude = longitude
+
+        // Fetch nearby vet locations
+        fetchNearbyVets(latitude, longitude) { locations ->
+            vetLocations = locations
+        }
     }
 
     // Setup camera position
@@ -73,7 +76,21 @@ fun LocationScreen(modifier: Modifier = Modifier) {
         cameraPositionState = cameraPositionState,
         properties = MapProperties(isMyLocationEnabled = true),
         uiSettings = MapUiSettings(myLocationButtonEnabled = true)
-    )
+    ) {
+        // Add a marker for the user's current location
+        Marker(
+            state = MarkerState(position = LatLng(userLatitude, userLongitude)),
+            title = "You are here"
+        )
+
+        // Add markers for nearby vets
+        vetLocations.forEach { location ->
+            Marker(
+                state = MarkerState(position = location),
+                title = "Veterinarian"
+            )
+        }
+    }
 }
 
 @Composable
@@ -107,6 +124,53 @@ fun UserLocation(onLocationReceived: (latitude: Double, longitude: Double) -> Un
     }
 }
 
+fun fetchNearbyVets(
+    latitude: Double,
+    longitude: Double,
+    onResult: (List<LatLng>) -> Unit
+) {
+    val apiKey = "AIzaSyC5_nPVbSzDsLD_qupNfkfYX3AQZvSofio"
+    val radius = 5000 // Radius in meters
+    val type = "veterinary_care"
+    val url =
+        "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=$radius&type=$type&key=$apiKey"
+
+    val client = okhttp3.OkHttpClient()
+    val request = okhttp3.Request.Builder()
+        .url(url)
+        .build()
+
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val response = client.newCall(request).execute()
+            val responseBody = response.body?.string()
+            if (!response.isSuccessful || responseBody == null) {
+                throw Exception("Request failed")
+            }
+
+            // Parse JSON response
+            val jsonObject = JSONObject(responseBody)
+            val results = jsonObject.getJSONArray("results")
+            val locations = mutableListOf<LatLng>()
+
+            for (i in 0 until results.length()) {
+                val location = results.getJSONObject(i).getJSONObject("geometry")
+                    .getJSONObject("location")
+                val lat = location.getDouble("lat")
+                val lng = location.getDouble("lng")
+                locations.add(LatLng(lat, lng))
+            }
+
+            withContext(Dispatchers.Main) {
+                onResult(locations)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+}
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VetLocationsTopBar() {
@@ -123,7 +187,7 @@ fun VetLocationsTopBar() {
             IconButton(onClick = { (context as? ComponentActivity)?.finish() }) {
                 Icon(
                     painter = painterResource(R.drawable.back),
-                    contentDescription = "Search"
+                    contentDescription = "Back"
                 )
             }
         },
