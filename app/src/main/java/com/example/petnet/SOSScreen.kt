@@ -83,7 +83,7 @@ fun SOS() {
     ) {
         Button(
             onClick = {
-                val intent = Intent(context, LostPetScreen::class.java)
+                val intent = Intent(context, FoundPetScreen::class.java)
                 context.startActivity(intent)
             },
             colors = ButtonDefaults.buttonColors(containerColor = blu),
@@ -110,7 +110,7 @@ fun SOS() {
 
         Button(
             onClick = {
-                val intent = Intent(context, MainFeedScreen::class.java)
+                val intent = Intent(context, LostPetScreen::class.java)
                 context.startActivity(intent)
             },
             colors = ButtonDefaults.buttonColors(containerColor = blu),
