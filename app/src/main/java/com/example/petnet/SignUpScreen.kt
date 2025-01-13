@@ -81,8 +81,7 @@ fun SignUp() {
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -98,11 +97,11 @@ fun SignUp() {
         Text(
             text = "Create an account",
             color = Color.White,
-            fontSize = 32.sp,
+            fontSize = 36.sp,
             fontFamily = balootamma,
             modifier = Modifier
-                .align(Alignment.Start)
-                .padding(bottom = 30.dp, start = 8.dp)
+                .align(Alignment.CenterHorizontally)
+                .padding(bottom = 30.dp)
         )
 
         // Email/Username
@@ -110,98 +109,125 @@ fun SignUp() {
             value = email,
             onValueChange = { email = it },
             placeholder = {
-                Text("Username or Email", color = Color.Gray, fontSize = 18.sp)
+                Text("Username or Email", color = gr,
+                    fontSize = 13.sp,
+                    fontFamily = nunito,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center)
             },
             leadingIcon = {
-                Icon(Icons.Default.Email, contentDescription = null, tint = Color.Gray)
+                Icon(
+                    painter = painterResource(id = R.drawable.namebar),
+                    contentDescription = null,
+                    tint = gr,
+                    modifier = Modifier.size(24.dp)
+                )
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFFF8E16C),
-                unfocusedContainerColor = Color(0xFFF8E16C),
+                focusedContainerColor = wh,
+                unfocusedContainerColor = wh,
                 focusedBorderColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent,
-                cursorColor = Color.Gray
+                cursorColor = gr
             ),
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 21.dp)
                 .height(64.dp)
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         // Password
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             placeholder = {
-                Text("Password", color = Color.Gray, fontSize = 18.sp)
+                Text("Password", color = gr,
+                    fontSize = 13.sp,
+                    fontFamily = nunito,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center)
             },
             leadingIcon = {
-                Icon(Icons.Default.Lock, contentDescription = null, tint = Color.Gray)
+                Icon(
+                    painter = painterResource(id = R.drawable.passwordbar),
+                    contentDescription = null,
+                    tint = gr,
+                    modifier = Modifier.size(24.dp)
+                )
             },
             trailingIcon = {
                 val visibilityIcon = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
                 Icon(
                     imageVector = visibilityIcon,
                     contentDescription = if (passwordVisible) "Hide password" else "Show password",
-                    tint = Color.Gray,
+                    tint = gr,
                     modifier = Modifier
                         .size(28.dp)
                         .clickable { passwordVisible = !passwordVisible }
                 )
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFFF8E16C),
-                unfocusedContainerColor = Color(0xFFF8E16C),
+                focusedContainerColor = wh,
+                unfocusedContainerColor = wh,
                 focusedBorderColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent,
-                cursorColor = Color.Gray
+                cursorColor = gr
             ),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 21.dp)
                 .height(64.dp)
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         // Confirm Password
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
             placeholder = {
-                Text("Confirm Password", color = Color.Gray, fontSize = 18.sp)
+                Text("Confirm Password", color = gr,
+                    fontSize = 13.sp,
+                    fontFamily = nunito,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center)
             },
             leadingIcon = {
-                Icon(Icons.Default.Lock, contentDescription = null, tint = Color.Gray)
+                Icon(
+                    painter = painterResource(id = R.drawable.passwordbar),
+                    contentDescription = null,
+                    tint = gr,
+                    modifier = Modifier.size(24.dp)
+                )
             },
             trailingIcon = {
                 val visibilityIcon = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
                 Icon(
                     imageVector = visibilityIcon,
                     contentDescription = if (passwordVisible) "Hide password" else "Show password",
-                    tint = Color.Gray,
+                    tint = gr,
                     modifier = Modifier
                         .size(28.dp)
                         .clickable { passwordVisible = !passwordVisible }
                 )
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFFF8E16C),
-                unfocusedContainerColor = Color(0xFFF8E16C),
+                focusedContainerColor = wh,
+                unfocusedContainerColor = wh,
                 focusedBorderColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent,
-                cursorColor = Color.Gray
+                cursorColor = gr
             ),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 21.dp)
                 .height(64.dp)
         )
 
@@ -219,7 +245,7 @@ fun SignUp() {
             fontFamily = nunitosans,
             modifier = Modifier
                 .align(Alignment.Start)
-                .padding(top = 32.dp, bottom = 25.dp, start = 8.dp),
+                .padding(vertical = 20.dp, horizontal = 51.dp),
             textAlign = TextAlign.Start
         )
 
@@ -227,10 +253,10 @@ fun SignUp() {
             onClick = {
                 // Perform registration logic
             },
-            colors = ButtonDefaults.buttonColors(containerColor = yellow),
+            colors = ButtonDefaults.buttonColors(wh),
             shape = RoundedCornerShape(50),
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(0.4f)
                 .padding(top = 24.dp)
                 .height(56.dp),
             enabled = password == confirmPassword && password.isNotEmpty() && email.isNotEmpty()

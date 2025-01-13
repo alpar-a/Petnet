@@ -26,8 +26,10 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -41,6 +43,9 @@ val nunito = FontFamily(Font(R.font.nunitosans))
 val yellow = Color(0xFFF8E16C)
 val bl = Color(0xFF323232)
 val blu = Color(0xFFA3D9FF)
+val org = Color(0xFFEB6423)
+val wh = Color(0xFFFBFBFB)
+val gr = Color(0xFF626262)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,8 +75,7 @@ fun LoginScreen() {
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -88,10 +92,10 @@ fun LoginScreen() {
         Text(
             text = "Welcome!",
             color = Color.White,
-            fontSize = 32.sp,
+            fontSize = 36.sp,
             fontFamily = balootamma,
             modifier = Modifier
-                .align(Alignment.Start)
+                .align(Alignment.CenterHorizontally)
                 .padding(bottom = 80.dp, start = 8.dp)
         )
 
@@ -100,14 +104,23 @@ fun LoginScreen() {
             value = email,
             onValueChange = { email = it },
             placeholder = {
-                Text("Username or Email", color = Color.Gray, fontSize = 18.sp)
+                Text("Username or Email", color = gr,
+                    fontSize = 13.sp,
+                    fontFamily = nunito,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center)
             },
             leadingIcon = {
-                Icon(Icons.Default.Email, contentDescription = null, tint = Color.Gray)
-            },
+                Icon(
+                    painter = painterResource(id = R.drawable.namebar),
+                    contentDescription = null,
+                    tint = gr,
+                    modifier = Modifier.size(24.dp)
+                )
+                          },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFFF8E16C),
-                unfocusedContainerColor = Color(0xFFF8E16C),
+                focusedContainerColor = Color(0xFFFBFBFB),
+                unfocusedContainerColor = Color(0xFFFBFBFB),
                 focusedBorderColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent,
                 cursorColor = Color.Gray
@@ -115,36 +128,45 @@ fun LoginScreen() {
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 21.dp)
                 .height(64.dp)
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         // Password
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             placeholder = {
-                Text("Password", color = Color.Gray, fontSize = 18.sp)
+                Text("Password", color = gr,
+                    fontSize = 13.sp,
+                    fontFamily = nunito,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center)
             },
             leadingIcon = {
-                Icon(Icons.Default.Lock, contentDescription = null, tint = Color.Gray)
+                Icon(
+                    painter = painterResource(id = R.drawable.passwordbar),
+                    contentDescription = null,
+                    tint = gr,
+                    modifier = Modifier.size(24.dp)
+                )
             },
             trailingIcon = {
                 val visibilityIcon = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
                 Icon(
                     imageVector = visibilityIcon,
                     contentDescription = if (passwordVisible) "Hide password" else "Show password",
-                    tint = Color.Gray,
+                    tint = gr,
                     modifier = Modifier
                         .size(28.dp)
                         .clickable { passwordVisible = !passwordVisible }
                 )
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFFF8E16C),
-                unfocusedContainerColor = Color(0xFFF8E16C),
+                focusedContainerColor = Color(0xFFFBFBFB),
+                unfocusedContainerColor = Color(0xFFFBFBFB),
                 focusedBorderColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent,
                 cursorColor = Color.Gray
@@ -153,7 +175,7 @@ fun LoginScreen() {
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 21.dp)
                 .height(64.dp)
         )
 
@@ -162,10 +184,10 @@ fun LoginScreen() {
             text = "Forgot Password?",
             color = Color.White,
             fontSize = 14.sp,
-            fontFamily = balootamma,
+            fontFamily = nunito,
             modifier = Modifier
                 .align(Alignment.End)
-                .padding(top = 32.dp, bottom = 80.dp)
+                .padding(top = 32.dp, bottom = 80.dp, end = 20.dp)
                 .clickable {
                     val intent = Intent(context, ForgotPasswordScreen::class.java)
                     context.startActivity(intent) }
@@ -173,37 +195,20 @@ fun LoginScreen() {
 
         // Sign-In
         Button(
-            onClick = { /* sign-in code */ },
-            colors = ButtonDefaults.buttonColors(containerColor = yellow),
+            onClick = {
+                val intent = Intent(context, MainFeedScreen::class.java)
+                context.startActivity(intent)
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = wh),
             shape = RoundedCornerShape(50),
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(0.4f)
                 .padding(top = 24.dp)
                 .height(56.dp)
         ) {
             Text(
                 text = "Sign In",
-                color = Color(0xFFEB6423),
-                fontFamily = balootamma,
-                fontSize = 24.sp
-            )
-        }
-
-        Button(
-            onClick = {
-                val intent = Intent(context, MainFeedScreen::class.java)
-                context.startActivity(intent)
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = yellow),
-            shape = RoundedCornerShape(50),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 24.dp)
-                .height(56.dp)
-        ) {
-            Text(
-                text = "Direct to Feed",
-                color = Color(0xFFEB6423),
+                color = org,
                 fontFamily = balootamma,
                 fontSize = 24.sp
             )
@@ -213,13 +218,18 @@ fun LoginScreen() {
         Text(
             text = buildAnnotatedString {
                 append("Don't have an account yet? ")
-                withStyle(style = SpanStyle(color = Color(0xFFF8E16C))) {
+                withStyle(
+                    style = SpanStyle(
+                        color = Color(0xFFFBFBFB),
+                        fontWeight = FontWeight.Bold
+                    )
+                ) {
                     append("Sign Up")
                 }
             },
             color = Color.White,
             fontSize = 14.sp,
-            fontFamily = balootamma,
+            fontFamily = nunito,
             modifier = Modifier
                 .padding(top = 64.dp)
                 .clickable {

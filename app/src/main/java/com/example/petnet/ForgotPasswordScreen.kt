@@ -8,10 +8,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -34,6 +36,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.petnet.ui.theme.PetnetTheme
@@ -61,8 +65,7 @@ fun ForgotPassword() {
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
@@ -76,36 +79,37 @@ fun ForgotPassword() {
         )
 
         Text(
-            text = "Forgot",
-            color = Color.White,
-            fontSize = 32.sp,
+            text = "Forgot password?",
+            color = wh,
+            fontSize = 36.sp,
             fontFamily = balootamma,
             modifier = Modifier
-                .align(Alignment.Start)
-                .padding(start = 8.dp)
+                .align(Alignment.CenterHorizontally)
         )
-        Text(
-            text = "password?",
-            color = Color.White,
-            fontSize = 32.sp,
-            fontFamily = balootamma,
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(bottom = 30.dp, start = 8.dp)
-        )
+
+        Spacer(modifier = Modifier.height(32.dp))
 
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             placeholder = {
-                Text("Enter your email address", color = Color.Gray, fontSize = 18.sp)
+                Text("Enter your email address", color = gr,
+                    fontSize = 13.sp,
+                    fontFamily = nunito,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center)
             },
             leadingIcon = {
-                Icon(Icons.Default.Email, contentDescription = null, tint = Color.Gray)
+                Icon(
+                    painter = painterResource(id = R.drawable.mail),
+                    contentDescription = null,
+                    tint = gr,
+                    modifier = Modifier.size(24.dp)
+                )
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFFF8E16C),
-                unfocusedContainerColor = Color(0xFFF8E16C),
+                focusedContainerColor = wh,
+                unfocusedContainerColor = wh,
                 focusedBorderColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent,
                 cursorColor = Color.Gray
@@ -113,7 +117,7 @@ fun ForgotPassword() {
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 21.dp)
                 .height(64.dp)
         )
 
@@ -123,19 +127,20 @@ fun ForgotPassword() {
             fontSize = 14.sp,
             fontFamily = nunitosans,
             modifier = Modifier
-                .padding(top = 32.dp, bottom = 80.dp, start = 32.dp, end = 32.dp)
+                .padding(horizontal = 39.dp, vertical = 30.dp)
         )
 
         Button(
             onClick = {
-                // Perform registration logic
+
             },
-            colors = ButtonDefaults.buttonColors(containerColor = yellow),
+            colors = ButtonDefaults.buttonColors(containerColor = wh),
             shape = RoundedCornerShape(50),
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 48.dp)
-                .height(56.dp),
+                .fillMaxWidth(0.4f)
+                .padding(top = 200.dp)
+                .height(56.dp)
+                .align(Alignment.CenterHorizontally)
         ) {
             Text(
                 text = "Send Code",
@@ -146,11 +151,11 @@ fun ForgotPassword() {
         }
         Text(
             text = "Back",
-            color = Color.White,
+            color = wh,
             fontSize = 20.sp,
             fontFamily = balootamma,
             modifier = Modifier
-                .padding(top = 100.dp, bottom = 10.dp)
+                .padding(top = 80.dp, bottom = 10.dp)
                 .clickable {
                     val intent = Intent(context, MainActivity::class.java)
                     context.startActivity(intent)
