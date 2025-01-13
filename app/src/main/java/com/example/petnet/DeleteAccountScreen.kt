@@ -58,8 +58,8 @@ fun DeleteAccountContent(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFFF6D00)) // Orange background
-            .padding(16.dp),
+            .background(Color(0xFFEB6423)) // Orange background
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Back Icon
@@ -89,9 +89,10 @@ fun DeleteAccountContent(modifier: Modifier = Modifier) {
         Text(
             text = "Delete Account",
             fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
+            fontFamily = balootamma,
             color = Color.White,
             textAlign = TextAlign.Center
+
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -107,8 +108,8 @@ fun DeleteAccountContent(modifier: Modifier = Modifier) {
                 Icon(Icons.Default.Email, contentDescription = null, tint = Color.Gray)
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFFF8E16C),
-                unfocusedContainerColor = Color(0xFFF8E16C),
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
                 focusedBorderColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent,
                 cursorColor = Color.Gray
@@ -120,7 +121,7 @@ fun DeleteAccountContent(modifier: Modifier = Modifier) {
                 .height(64.dp)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(18.dp))
 
         // Password TextField
         OutlinedTextField(
@@ -133,7 +134,8 @@ fun DeleteAccountContent(modifier: Modifier = Modifier) {
                 Icon(Icons.Default.Lock, contentDescription = null, tint = Color.Gray)
             },
             trailingIcon = {
-                val visibilityIcon = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
+                val visibilityIcon =
+                    if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
                 Icon(
                     imageVector = visibilityIcon,
                     contentDescription = if (passwordVisible) "Hide password" else "Show password",
@@ -144,8 +146,8 @@ fun DeleteAccountContent(modifier: Modifier = Modifier) {
                 )
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFFF8E16C),
-                unfocusedContainerColor = Color(0xFFF8E16C),
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
                 focusedBorderColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent,
                 cursorColor = Color.Gray
@@ -158,7 +160,7 @@ fun DeleteAccountContent(modifier: Modifier = Modifier) {
                 .height(64.dp)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(18.dp))
 
         // Description Text
         Text(
@@ -175,17 +177,20 @@ fun DeleteAccountContent(modifier: Modifier = Modifier) {
         Button(
             onClick = { /* Delete account action */ },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF0000)), // Red button
+            shape = RoundedCornerShape(50),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(24.dp)
+                .padding(top = 24.dp)
+                .height(56.dp)
         ) {
             Text(
                 text = "Delete",
                 color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 24.sp,
+                fontFamily = balootamma,
+
             )
         }
     }
 }
+
