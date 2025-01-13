@@ -2,6 +2,7 @@ package com.example.petnet
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -38,6 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.petnet.ui.theme.PetnetTheme
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 class SettingsScreen : ComponentActivity() {
@@ -66,6 +69,9 @@ class SettingsScreen : ComponentActivity() {
 @Composable
 fun Settings() {
     val context = LocalContext.current
+    val auth = FirebaseAuth.getInstance()
+    val db = FirebaseFirestore.getInstance()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -83,33 +89,6 @@ fun Settings() {
             }
             Spacer(modifier = Modifier.weight(1f))
         }
-/*
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { /* Display settings action */ }
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.display_settings),
-                contentDescription = "Display Settings",
-                tint = Color.Black,
-                modifier = Modifier
-                    .size(30.dp)
-                    .padding(start = 42.dp, top = 182.dp)
-            )
-
-            Spacer(modifier = Modifier.size(16.dp))
-            Text(
-                text = "Display Settings",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Normal,
-                color = Color.Black
-            )
-        }
-*/
-
 
         Row(
             modifier = Modifier
@@ -133,12 +112,16 @@ fun Settings() {
             )
         }
 
-
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /* Sign-out action */ }
+                .clickable {
+                    // Sign-out action
+                    auth.signOut()
+                    val intent = Intent(context, MainActivity::class.java)
+                    context.startActivity(intent)
+                    (context as? ComponentActivity)?.finish()
+                }
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -157,14 +140,40 @@ fun Settings() {
             )
         }
 
-
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    val intent = Intent(context, DeleteAccountScreen::class.java)
-                    context.startActivity(intent)
+                    // Delete Account action
+                    val user = auth.currentUser
+                    if (user != null) {
+                        db.collection("profiles").document(user.uid).delete()
+                            .addOnSuccessListener {
+                                user.delete().addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        Toast.makeText(
+                                            context,
+                                            "Account deleted successfully!",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                        val intent = Intent(context, MainActivity::class.java)
+                                        context.startActivity(intent)
+                                        (context as? ComponentActivity)?.finish()
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Error: ${task.exception?.message}",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                }
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                            }
+                    } else {
+                        Toast.makeText(context, "No user logged in.", Toast.LENGTH_LONG).show()
+                    }
                 }
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically

@@ -2,6 +2,7 @@
 agp = "8.7.3"
 coilCompose = "2.4.0"
 coilComposeVersion = "2.4.0"
+coilKtCoilCompose = "2.2.2"
 coreSplashscreen = "1.0.1"
 firebaseBom = "33.7.0"
 glide = "4.14.2"
@@ -54,6 +55,7 @@ androidx-ui-tooling-v160 = { module = "androidx.compose.ui:ui-tooling", version.
 androidx-ui-v160 = { module = "androidx.compose.ui:ui", version.ref = "uiVersion" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 coil-compose-v222 = { module = "io.coil-kt:coil-compose", version.ref = "coilComposeVersion" }
+coil-kt-coil-compose-v222 = { module = "io.coil-kt:coil-compose", version.ref = "coilKtCoilCompose" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-database-ktx = { module = "com.google.firebase:firebase-database-ktx" }

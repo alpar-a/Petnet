@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.petnet.ui.theme.PetnetTheme
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 
 val balootamma = FontFamily(Font(R.font.balootammaregular))
 val nunito = FontFamily(Font(R.font.nunitosans))
@@ -49,17 +50,29 @@ val gr = Color(0xFF626262)
 val red = Color(0xFFF8CBB4)
 
 class MainActivity : ComponentActivity() {
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         FirebaseApp.initializeApp(this)
         installSplashScreen()
         super.onCreate(savedInstanceState)
-        setContent {
-            PetnetTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = Color(0xFFEB6423)
-                ) {
-                    LoginScreen()
+
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            // If the user is logged in, navigate to Main Feed
+            val intent = Intent(this, MainFeedScreen::class.java)
+            startActivity(intent)
+            finish() // Close MainActivity so it won't be in the back stack
+        } else {
+            // If the user is not logged in, show the Login screen
+            setContent {
+                PetnetTheme {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = Color(0xFFEB6423)
+                    ) {
+                        LoginScreen()
+                    }
                 }
             }
         }
@@ -73,6 +86,7 @@ fun LoginScreen() {
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val auth = FirebaseAuth.getInstance()
 
     Column(
         modifier = Modifier
@@ -105,11 +119,13 @@ fun LoginScreen() {
             value = email,
             onValueChange = { email = it },
             placeholder = {
-                Text("Username or Email", color = gr,
+                Text(
+                    "Username or Email", color = gr,
                     fontSize = 13.sp,
                     fontFamily = nunito,
                     fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center)
+                    textAlign = TextAlign.Center
+                )
             },
             leadingIcon = {
                 Icon(
@@ -118,7 +134,7 @@ fun LoginScreen() {
                     tint = gr,
                     modifier = Modifier.size(24.dp)
                 )
-                          },
+            },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = Color(0xFFFBFBFB),
                 unfocusedContainerColor = Color(0xFFFBFBFB),
@@ -140,11 +156,13 @@ fun LoginScreen() {
             value = password,
             onValueChange = { password = it },
             placeholder = {
-                Text("Password", color = gr,
+                Text(
+                    "Password", color = gr,
                     fontSize = 13.sp,
                     fontFamily = nunito,
                     fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center)
+                    textAlign = TextAlign.Center
+                )
             },
             leadingIcon = {
                 Icon(
@@ -191,14 +209,22 @@ fun LoginScreen() {
                 .padding(top = 32.dp, bottom = 80.dp, end = 20.dp)
                 .clickable {
                     val intent = Intent(context, ForgotPasswordScreen::class.java)
-                    context.startActivity(intent) }
+                    context.startActivity(intent)
+                }
         )
 
         // Sign-In
         Button(
             onClick = {
-                val intent = Intent(context, MainFeedScreen::class.java)
-                context.startActivity(intent)
+                auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val intent = Intent(context, MainFeedScreen::class.java)
+                            context.startActivity(intent)
+                        } else {
+                            // Handle error
+                        }
+                    }
             },
             colors = ButtonDefaults.buttonColors(containerColor = wh),
             shape = RoundedCornerShape(50),
