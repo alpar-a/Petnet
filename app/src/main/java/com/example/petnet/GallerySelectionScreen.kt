@@ -1,17 +1,20 @@
 package com.example.petnet
 
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.READ_MEDIA_IMAGES
+import android.Manifest.permission.READ_MEDIA_VIDEO
+import android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
 import android.app.Activity
-import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
-import androidx.activity.ComponentActivity
-import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import android.os.Bundle
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,16 +27,13 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -43,183 +43,72 @@ class GallerySelectionActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
-                GallerySelectionScreen(onImageSelected = { selectedImagePath ->
-                    // Handle image selection here (e.g., navigate to the next screen or process the image)
+                GallerySelectionScreen(onImageSelected = { selectedImageUri ->
+                    Toast.makeText(this, "Selected Image: $selectedImageUri", Toast.LENGTH_SHORT).show()
+                    // TODO: Handle the image selection logic here, like navigating to the upload screen
                 })
             }
         }
     }
 }
-@Composable
-fun MainActivityContent() {
-    RequestStoragePermission {
-        GallerySelectionScreen(onImageSelected = { imageUri ->
-            // Handle the selected image URI here
-            println("Selected image URI: $imageUri")
-        })
-    }
-}
-@Composable
-fun PermissionHandler(
-    permission: String,
-    onPermissionGranted: @Composable () -> Unit,
-    onPermissionDenied: @Composable () -> Unit
-) {
-    val context = LocalContext.current
-    val isPermissionGranted = remember {
-        mutableStateOf(ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED)
-    }
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            isPermissionGranted.value = isGranted
-        }
-    )
-
-    if (isPermissionGranted.value) {
-        onPermissionGranted()
-    } else {
-        LaunchedEffect(Unit) {
-            permissionLauncher.launch(permission)
-        }
-        onPermissionDenied()
-    }
-}
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GallerySelectionScreen(onImageSelected: (String) -> Unit = {}) {
+fun GallerySelectionScreen(onImageSelected: (Uri) -> Unit = {}) {
     val context = LocalContext.current
-    val permissionGranted = remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(
-                context,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED
-        )
-    }
 
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        permissionGranted.value = isGranted
-        if (!isGranted) {
-            Toast.makeText(
-                context,
-                "Storage permission is required to access gallery.",
-                Toast.LENGTH_SHORT
-            ).show()
+    // Image URI state
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    // Image picker launcher
+    val pickImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            selectedImageUri = uri
+            onImageSelected(uri) // Notify caller with the selected image URI
+        } else {
+            Toast.makeText(context, "No image selected.", Toast.LENGTH_SHORT).show()
         }
     }
 
-    LaunchedEffect(Unit) {
-        if (!permissionGranted.value) {
-            permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
-    }
-
-    if (permissionGranted.value) {
-        val galleryImages = remember { mutableStateListOf<Uri>() }
-
-        // Fetch images
-        LaunchedEffect(Unit) {
-            galleryImages.clear()
-            galleryImages.addAll(fetchGalleryImages(context))
-        }
-
-        Scaffold(
-            topBar = {
-                TopAppBar(title = { Text("Gallery Selection") })
-            }
-        ) { paddingValues ->
-            if (galleryImages.isNotEmpty()) {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                ) {
-                    items(galleryImages) { imageUri ->
-                        Box(
+    // UI Layout
+    Scaffold(
+        topBar = { TopAppBar(title = { Text("Select a Picture") }) },
+        content = { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    // Preview the selected image
+                    if (selectedImageUri != null) {
+                        Image(
+                            painter = rememberAsyncImagePainter(selectedImageUri),
+                            contentDescription = "Selected Image",
                             modifier = Modifier
-                                .padding(4.dp)
+                                .size(200.dp)
                                 .clip(RoundedCornerShape(8.dp))
-                                .clickable { onImageSelected(imageUri.toString()) }
-                        ) {
-                            Image(
-                                painter = rememberAsyncImagePainter(imageUri),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
+                                .padding(8.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Text("No image selected.", modifier = Modifier.padding(8.dp))
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Button to open image picker
+                    Button(onClick = { pickImageLauncher.launch("image/*") }) {
+                        Text("Choose Image")
                     }
                 }
-            } else {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Text("No images found.")
-                }
-            }
-        }
-    } else {
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-            Text("Permission is required to access gallery.")
-        }
-    }
-}
-
-
-
-fun openAppSettings(activity: Activity) {
-    Intent(
-        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-        Uri.fromParts("package", activity.packageName, null)
-    ).also(activity::startActivity)
-}
-
-
-
-
-@Composable
-fun RequestStoragePermission(
-    onPermissionGranted: @Composable () -> Unit
-) {
-    val context = LocalContext.current
-    val permissionState = remember { mutableStateOf(false) }
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            permissionState.value = isGranted
-            if (!isGranted) {
-                Toast.makeText(context, "Storage permission is required.", Toast.LENGTH_SHORT).show()
             }
         }
     )
-
-    LaunchedEffect(Unit) {
-        if (ContextCompat.checkSelfPermission(
-                context,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            permissionState.value = true
-        } else {
-            permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
-    }
-
-    if (permissionState.value) {
-        onPermissionGranted()
-    }
 }
-
-
 
 fun fetchGalleryImages(context: Context): List<Uri> {
     val imageUris = mutableListOf<Uri>()
@@ -250,3 +139,9 @@ fun fetchGalleryImages(context: Context): List<Uri> {
     return imageUris
 }
 
+fun openAppSettings(activity: Activity) {
+    Intent(
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        Uri.fromParts("package", activity.packageName, null)
+    ).also(activity::startActivity)
+}
