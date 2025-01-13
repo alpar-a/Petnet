@@ -112,9 +112,6 @@ fun EditProfile() {
     var properties by remember { mutableStateOf("Finnish Spitz, 1 years old // Female") }
     var biography by remember { mutableStateOf("Moda Ikonu") }
 
-    var nameError by remember { mutableStateOf(false) }
-    var usernameError by remember { mutableStateOf(false) }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -129,11 +126,14 @@ fun EditProfile() {
             IconButton(onClick = { (context as? ComponentActivity)?.finish() }) {
                 Icon(
                     painter = painterResource(id = R.drawable.back),
-                    contentDescription = "Back"
+                    contentDescription = "Back",
+                    modifier = Modifier.size(30.dp)
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Profile Picture with Edit Icon
         Box(
@@ -153,101 +153,147 @@ fun EditProfile() {
                 onClick = { /* profile picture change functionality */ },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .size(28.dp)
+                    .size(50.dp)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.editpfp),
                     contentDescription = "Edit",
-                    tint = Color.Red
+                    tint = Color(0xFFEB6423)
                 )
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Editable Fields
-        OutlinedTextField(
+        // Custom Text Fields
+        CustomOutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Name") },
-            leadingIcon = {
-                Icon(painter = painterResource(id = R.drawable.name), contentDescription = "Name")
-            },
-            modifier = Modifier.fillMaxWidth(),
-            isError = nameError
+            placeholder = "Name",
+            leadingIconId = R.drawable.name
         )
-        if (nameError) Text("Name cannot be empty", color = Color.Red, fontSize = 12.sp)
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
+        CustomOutlinedTextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text("Username") },
-            leadingIcon = {
-                Icon(painter = painterResource(id = R.drawable.username), contentDescription = "Username")
-            },
-            modifier = Modifier.fillMaxWidth(),
-            isError = usernameError
+            placeholder = "Username",
+            leadingIconId = R.drawable.editusername
         )
-        if (usernameError) Text("Username cannot be empty", color = Color.Red, fontSize = 12.sp)
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
             value = properties,
             onValueChange = { properties = it },
-            label = { Text("Properties") },
+            placeholder = { Text("Finnish Spitz, 1 years old // Female",
+                color = bl,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = nunito) },
+            shape = RoundedCornerShape(12.dp),
             leadingIcon = {
-                Icon(painter = painterResource(id = R.drawable.properties), contentDescription = "Properties")
+                Icon(
+                    painter = painterResource(id = R.drawable.properties),
+                    contentDescription = null,
+                    tint = gr,
+                    modifier = Modifier.size(24.dp)
+                )
             },
-            modifier = Modifier.fillMaxWidth()
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = wh,
+                unfocusedContainerColor = wh,
+                focusedBorderColor = gr,
+                unfocusedBorderColor = gr,
+                cursorColor = Color.Black
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(110.dp)
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
+        CustomOutlinedTextField(
             value = biography,
             onValueChange = { biography = it },
-            label = { Text("Biography") },
-            leadingIcon = {
-                Icon(painter = painterResource(id = R.drawable.bio), contentDescription = "Bio")
-            },
-            modifier = Modifier.fillMaxWidth()
+            placeholder = "Biography",
+            leadingIconId = R.drawable.bio
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Save Changes Button
-        Button(
-            onClick = {
-                nameError = name.isBlank()
-                usernameError = username.isBlank()
-
-                if (!nameError && !usernameError) {
-                    saveChanges(name, username, properties, biography, context)
-                }
-            },
+        // Save Changes Button (Unchanged)
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD966))
+                .fillMaxSize()
         ) {
-            Text(
-                text = "Save Changes",
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                color = Color.Black
-            )
+            Button(
+                onClick = {
+                    if (name.isNotBlank() && username.isNotBlank()) {
+                        saveChanges(name, username, properties, biography, context)
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = yellow),
+                shape = RoundedCornerShape(50),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .width(233.dp)
+                    .height(55.dp)
+            ) {
+                Text(
+                    text = "Save Changes",
+                    color = Color(0xFFEB6423),
+                    fontFamily = balootamma,
+                    fontSize = 24.sp
+                )
+            }
         }
     }
 }
+
 
 // Function to handle saving changes
 fun saveChanges(name: String, username: String, properties: String, biography: String, context: Context) {
     // add saving logic
     Toast.makeText(context, "Changes saved successfully!", Toast.LENGTH_SHORT).show()
+}
+
+@Composable
+fun CustomOutlinedTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    leadingIconId: Int,
+    modifier: Modifier = Modifier
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        placeholder = {
+            Text(
+                text = placeholder,
+                color = gr,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
+            )
+        },
+        leadingIcon = {
+            Icon(
+                painter = painterResource(id = leadingIconId),
+                contentDescription = null,
+                tint = gr,
+                modifier = Modifier.size(20.dp)
+            )
+        },
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = wh,
+            unfocusedContainerColor = wh,
+            focusedBorderColor = Color(0xFFEB6423),
+            unfocusedBorderColor = gr,
+            cursorColor = gr
+        ),
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .height(64.dp)
+    )
 }
 
 
