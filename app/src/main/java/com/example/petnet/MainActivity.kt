@@ -46,6 +46,7 @@ val blu = Color(0xFFA3D9FF)
 val org = Color(0xFFEB6423)
 val wh = Color(0xFFFBFBFB)
 val gr = Color(0xFF626262)
+val red = Color(0xFFF8CBB4)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

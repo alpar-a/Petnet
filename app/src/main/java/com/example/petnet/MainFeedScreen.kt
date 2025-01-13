@@ -302,7 +302,8 @@ fun BottomBar(navController: NavController) {
             label = { Text("Events") },
             selected = false,
             onClick = {
-
+                val intent = Intent(context, EventsScreen::class.java)
+                context.startActivity(intent)
             }
         )
         NavigationBarItem(
