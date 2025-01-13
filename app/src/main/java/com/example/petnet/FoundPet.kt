@@ -455,7 +455,7 @@ fun FoundPetBottomBar() {
             label = { Text("S.O.S") },
             selected = true,
             onClick = {
-                val intent = Intent(context, LostPetScreen::class.java)
+                val intent = Intent(context, SOSScreen::class.java)
                 context.startActivity(intent)
             }
         )

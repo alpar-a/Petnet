@@ -1,5 +1,5 @@
 package com.example.petnet
-/*
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -33,11 +33,11 @@ class EventsScreen : ComponentActivity() {
                                 .fillMaxSize()
                                 .padding(padding)
                         ) {
-                            AnnouncementBanner()
+                            //AnnouncementBanner()
                             Spacer(modifier = Modifier.height(16.dp))
-                            UpcomingEventsSection()
+                            //UpcomingEventsSection()
                             Spacer(modifier = Modifier.height(16.dp))
-                            MultipleEventsBanner()
+                            //MultipleEventsBanner()
                         }
                     }
                 )
@@ -48,31 +48,7 @@ class EventsScreen : ComponentActivity() {
 
 @Composable
 fun EventsTopBar() {
-    TopAppBar(
-        title = {
-            Text(
-                text = "PetNet",
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = { /* Search Action */ }) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_search),
-                    contentDescription = "Search Icon"
-                )
-            }
-        },
-        actions = {
-            IconButton(onClick = { /* Menu Action */ }) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_menu),
-                    contentDescription = "Menu Icon"
-                )
-            }
-        }
-    )
+
 }
 
 @Composable
@@ -136,6 +112,7 @@ fun EventsBottomBar() {
     }
 }
 
+/*
 @Composable
 fun AnnouncementBanner() {
     Surface(

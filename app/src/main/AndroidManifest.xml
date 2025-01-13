@@ -113,6 +113,13 @@
             android:exported="true"
             android:label="Lost Pet Screen"
             android:theme="@style/Theme.Petnet"/>
+
+        <activity
+            android:name=".FoundPetScreen"
+            android:exported="true"
+            android:label="Found Pet Screen"
+            android:theme="@style/Theme.Petnet"/>
+
         <activity
             android:name=".EventsScreen"
             android:exported="true"
