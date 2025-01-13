@@ -107,6 +107,12 @@
             android:exported="true"
             android:label="SOS Screen"
             android:theme="@style/Theme.Petnet"/>
+
+        <activity
+            android:name=".LostPetScreen"
+            android:exported="true"
+            android:label="Lost Pet Screen"
+            android:theme="@style/Theme.Petnet"/>
     </application>
 
 
