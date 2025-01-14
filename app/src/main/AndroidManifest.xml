@@ -136,6 +136,12 @@
             android:label="Events Screen"
             android:theme="@style/Theme.Petnet"/>
 
+        <activity
+            android:name=".AskVetScreen"
+            android:exported="true"
+            android:label="Ask Vet Screen"
+            android:theme="@style/Theme.Petnet"/>
+
     </application>
 
 

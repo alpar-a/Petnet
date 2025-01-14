@@ -8,62 +8,45 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.TabRowDefaults.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.example.petnet.ui.theme.PetnetTheme
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.petnet.ui.theme.PetnetTheme
+
 
 @OptIn(ExperimentalMaterial3Api::class)
-class MenuScreen : ComponentActivity() {
+class AskVetScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             PetnetTheme {
                 val navController = rememberNavController()
                 Scaffold(
-                    topBar = { MenuTopBar() },
-                    bottomBar = { MenuBottomBar(navController) },
+                    topBar = { AskVetTopBar() },
+                    bottomBar = { AskVetBottomBar(navController) },
                     content = { padding ->
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(padding)
                         ) {
-                            Menu()
+                            AskVet()
                         }
                     }
                 )
@@ -73,20 +56,20 @@ class MenuScreen : ComponentActivity() {
 }
 
 @Composable
-fun Menu() {
+fun AskVet() {
     val context = LocalContext.current
+    var questionText by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top
     ) {
-        // Back Button Row
-
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top
         ) {
             IconButton(onClick = { (context as? ComponentActivity)?.finish() }) {
                 Icon(
@@ -95,107 +78,88 @@ fun Menu() {
                     modifier = Modifier.size(24.dp)
                 )
             }
-            Spacer(modifier = Modifier.weight(1f))
         }
 
-        // Profile Picture
-        Image(
-            painter = painterResource(id = R.drawable.profile),
-            contentDescription = "Profile Picture",
-            modifier = Modifier
-                .size(100.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.background)
-                .border(2.dp, gr.copy(alpha = 0.5f), CircleShape)
-        )
+        Spacer(modifier = Modifier.height(8.dp))
 
-        // Profile Title
-        Text(
-            text = "My Profile",
-            fontWeight = FontWeight.Bold,
-            fontSize = 22.sp,
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .clickable {
-                    val intent = Intent(context, ProfileScreen::class.java)
-                    context.startActivity(intent)
-                },
-            color = MaterialTheme.colorScheme.primary
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.chat),
+                contentDescription = "Question Icon",
+                tint = org,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Ask a question to the vet",
+                fontSize = 16.sp,
+                fontFamily = nunito,
+                fontWeight = FontWeight.Bold,
+                color = org
+            )
+        }
 
-        // Divider
-        Divider(
-            color = gr.copy(alpha = 0.5f),
-            thickness = 1.dp,
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = questionText,
+            onValueChange = { questionText = it },
+            label = {
+                Text("Ask question here :",
+                    color = gr,
+                    fontFamily = nunito,
+                    fontWeight = FontWeight.Bold)
+            },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp)
+                .height(450.dp),
+            shape = RoundedCornerShape(8.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = wh,
+                unfocusedContainerColor = wh,
+                focusedBorderColor = gr.copy(alpha = 0.5f),
+                unfocusedBorderColor = gr.copy(alpha = 0.5f),
+                cursorColor = bl
+            )
         )
 
-        // Menu Items
-        MenuButton(
-            text = "Vet Locations",
-            onClick = {
-                val intent = Intent(context, VetLocationsScreen::class.java)
-                context.startActivity(intent)
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Button(
+                onClick = {
+                    val intent = Intent(context, MainFeedScreen::class.java)
+                    context.startActivity(intent)
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = org),
+                shape = RoundedCornerShape(50),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .width(147.dp)
+                    .height(55.dp)
+            ) {
+                Text(
+                    text = "Create",
+                    color = wh,
+                    fontFamily = balootamma,
+                    fontSize = 24.sp
+                )
             }
-        )
-        ShortDivider()
-        MenuButton(
-            text = "Ask Vet",
-            onClick = {
-                val intent = Intent(context, AskVetScreen::class.java)
-                context.startActivity(intent)
-            }
-        )
-        ShortDivider()
-        MenuButton(
-            text = "Settings",
-            onClick = {
-                val intent = Intent(context, SettingsScreen::class.java)
-                context.startActivity(intent)
-            }
-        )
-        ShortDivider()
-        MenuButton(
-            text = "Contact",
-            onClick = {
-                val intent = Intent(context, ContactScreen::class.java)
-                context.startActivity(intent)
-            }
-        )
+        }
     }
 }
-
-@Composable
-fun MenuButton(text: String, onClick: () -> Unit) {
-    Text(
-        text = text,
-        fontSize = 18.sp,
-        fontWeight = FontWeight.Medium,
-        modifier = Modifier
-            .padding(vertical = 8.dp)
-            .clickable(onClick = onClick),
-        color = MaterialTheme.colorScheme.primary
-    )
-}
-
-@Composable
-fun ShortDivider() {
-    Divider(
-        color = gr.copy(alpha = 0.5f),
-        thickness = 1.dp,
-        modifier = Modifier
-            .padding(horizontal = 150.dp, vertical = 8.dp)
-    )
-}
-
 
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuTopBar() {
+fun AskVetTopBar() {
     val context = LocalContext.current
     TopAppBar(
         title = {
@@ -234,7 +198,7 @@ fun MenuTopBar() {
 }
 
 @Composable
-fun MenuBottomBar(navController: NavHostController) {
+fun AskVetBottomBar(navController: NavHostController) {
     val context = LocalContext.current
     var showPermissionsDialog by remember { mutableStateOf(false) }
 
