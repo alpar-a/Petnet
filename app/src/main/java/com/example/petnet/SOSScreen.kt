@@ -216,7 +216,8 @@ fun SOSBottomBar(navController: NavHostController) {
                 "Home"
             )  },
             selected = false,
-            onClick = { navController.navigate("feed") }
+            onClick = { val intent = Intent(context, MainFeedScreen::class.java)
+                context.startActivity(intent) }
         )
         NavigationBarItem(
             icon = {
