@@ -140,7 +140,7 @@ fun fetchNearbyVets(
     longitude: Double,
     onResult: (List<LatLng>) -> Unit
 ) {
-    val apiKey = "AIzaSyC5_nPVbSzDsLD_qupNfkfYX3AQZvSofio"
+    val apiKey = "apikey"
     val radius = 5000 // Radius in meters
     val type = "veterinary_care"
     val url =
