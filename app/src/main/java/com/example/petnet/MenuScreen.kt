@@ -2,6 +2,7 @@ package com.example.petnet
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -29,6 +30,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +43,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.petnet.ui.theme.PetnetTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,9 +53,10 @@ class MenuScreen : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PetnetTheme {
+                val navController = rememberNavController()
                 Scaffold(
                     topBar = { MenuTopBar() },
-                    bottomBar = { MenuBottomBar() },
+                    bottomBar = { MenuBottomBar(navController) },
                     content = { padding ->
                         Column(
                             modifier = Modifier
@@ -225,9 +233,33 @@ fun MenuTopBar() {
 }
 
 @Composable
-fun MenuBottomBar() {
+fun MenuBottomBar(navController: NavHostController) {
     val context = LocalContext.current
-    NavigationBar {
+    var showPermissionsDialog by remember { mutableStateOf(false) }
+
+    if (showPermissionsDialog) {
+        HandlePermissions(
+            onPermissionsGranted = {
+                showPermissionsDialog = false
+                navController.navigate("gallerySelection")
+            },
+            onPermissionsDenied = {
+                showPermissionsDialog = false
+                Toast.makeText(
+                    context,
+                    "Storage permissions are required to access photos.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        )
+    }
+
+    NavigationBar(
+        modifier = Modifier
+            .background(wh)
+            .border(1.dp, gr.copy(alpha = 0.2f)),
+        containerColor = wh
+    ) {
         NavigationBarItem(
             icon = {
                 Icon(
@@ -235,12 +267,11 @@ fun MenuBottomBar() {
                     contentDescription = "Home"
                 )
             },
-            label = { Text("Home") },
+            label = { Text(
+                "Home"
+            )  },
             selected = false,
-            onClick = {
-                val intent = Intent(context, MainFeedScreen::class.java)
-                context.startActivity(intent)
-            }
+            onClick = { navController.navigate("feed") }
         )
         NavigationBarItem(
             icon = {
@@ -252,7 +283,8 @@ fun MenuBottomBar() {
             label = { Text("Events") },
             selected = false,
             onClick = {
-
+                val intent = Intent(context, EventsScreen::class.java)
+                context.startActivity(intent)
             }
         )
         NavigationBarItem(
@@ -263,9 +295,9 @@ fun MenuBottomBar() {
                 )
             },
             label = { Text("Photo") },
-            selected = false,
+            selected = navController.currentDestination?.route == "gallerySelection",
             onClick = {
-
+                showPermissionsDialog = true
             }
         )
         NavigationBarItem(
@@ -278,7 +310,8 @@ fun MenuBottomBar() {
             label = { Text("S.O.S") },
             selected = false,
             onClick = {
-
+                val intent = Intent(context, SOSScreen::class.java)
+                context.startActivity(intent)
             }
         )
         NavigationBarItem(

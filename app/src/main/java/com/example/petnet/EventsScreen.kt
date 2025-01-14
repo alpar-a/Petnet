@@ -2,6 +2,7 @@ package com.example.petnet
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -44,10 +45,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.petnet.ui.theme.PetnetTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,9 +63,10 @@ class EventsScreen : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PetnetTheme {
+                val navController = rememberNavController()
                 Scaffold(
                     topBar = { EventsTopBar() },
-                    bottomBar = { EventsBottomBar() },
+                    bottomBar = { EventsBottomBar(navController) },
                     content = { padding ->
                         Column(
                             modifier = Modifier
@@ -308,9 +316,33 @@ fun EventsTopBar() {
 }
 
 @Composable
-fun EventsBottomBar() {
+fun EventsBottomBar(navController: NavHostController) {
     val context = LocalContext.current
-    NavigationBar {
+    var showPermissionsDialog by remember { mutableStateOf(false) }
+
+    if (showPermissionsDialog) {
+        HandlePermissions(
+            onPermissionsGranted = {
+                showPermissionsDialog = false
+                navController.navigate("gallerySelection")
+            },
+            onPermissionsDenied = {
+                showPermissionsDialog = false
+                Toast.makeText(
+                    context,
+                    "Storage permissions are required to access photos.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        )
+    }
+
+    NavigationBar(
+        modifier = Modifier
+            .background(wh)
+            .border(1.dp, gr.copy(alpha = 0.2f)),
+        containerColor = wh
+    ) {
         NavigationBarItem(
             icon = {
                 Icon(
@@ -318,22 +350,23 @@ fun EventsBottomBar() {
                     contentDescription = "Home"
                 )
             },
-            label = { Text("Home") },
+            label = { Text(
+                "Home"
+            )  },
             selected = false,
-            onClick = {
-                val intent = Intent(context, MainFeedScreen::class.java)
-                context.startActivity(intent)
-            }
+            onClick = { navController.navigate("feed") }
         )
         NavigationBarItem(
             icon = {
                 Icon(
                     painter = painterResource(R.drawable.ic_calendar),
-                    contentDescription = "Events"
+                    contentDescription = "Events",
+                    tint = org
                 )
             },
-            label = { Text("Events") },
-            selected = true,
+            label = { Text("Events",
+                color = org) },
+            selected = false,
             onClick = {
                 val intent = Intent(context, EventsScreen::class.java)
                 context.startActivity(intent)
@@ -347,9 +380,9 @@ fun EventsBottomBar() {
                 )
             },
             label = { Text("Photo") },
-            selected = false,
+            selected = navController.currentDestination?.route == "gallerySelection",
             onClick = {
-
+                showPermissionsDialog = true
             }
         )
         NavigationBarItem(

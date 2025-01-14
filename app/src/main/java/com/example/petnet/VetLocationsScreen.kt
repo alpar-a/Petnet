@@ -4,11 +4,14 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import org.json.JSONObject
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.petnet.ui.theme.PetnetTheme
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
@@ -38,9 +43,10 @@ class VetLocationsScreen : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PetnetTheme {
+                val navController = rememberNavController()
                 Scaffold(
                     topBar = { VetLocationsTopBar() },
-                    bottomBar = { VetLocationsBottomBar() },
+                    bottomBar = { VetLocationsBottomBar(navController) },
                     content = { padding ->
                         LocationScreen(modifier = Modifier.padding(padding))
                     }
@@ -217,9 +223,33 @@ fun VetLocationsTopBar() {
 }
 
 @Composable
-fun VetLocationsBottomBar() {
+fun VetLocationsBottomBar(navController: NavHostController) {
     val context = LocalContext.current
-    NavigationBar {
+    var showPermissionsDialog by remember { mutableStateOf(false) }
+
+    if (showPermissionsDialog) {
+        HandlePermissions(
+            onPermissionsGranted = {
+                showPermissionsDialog = false
+                navController.navigate("gallerySelection")
+            },
+            onPermissionsDenied = {
+                showPermissionsDialog = false
+                Toast.makeText(
+                    context,
+                    "Storage permissions are required to access photos.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        )
+    }
+
+    NavigationBar(
+        modifier = Modifier
+            .background(wh)
+            .border(1.dp, gr.copy(alpha = 0.2f)),
+        containerColor = wh
+    ) {
         NavigationBarItem(
             icon = {
                 Icon(
@@ -227,12 +257,11 @@ fun VetLocationsBottomBar() {
                     contentDescription = "Home"
                 )
             },
-            label = { Text("Home") },
+            label = { Text(
+                "Home"
+            )  },
             selected = false,
-            onClick = {
-                val intent = Intent(context, MainFeedScreen::class.java)
-                context.startActivity(intent)
-            }
+            onClick = { navController.navigate("feed") }
         )
         NavigationBarItem(
             icon = {
@@ -244,7 +273,8 @@ fun VetLocationsBottomBar() {
             label = { Text("Events") },
             selected = false,
             onClick = {
-
+                val intent = Intent(context, EventsScreen::class.java)
+                context.startActivity(intent)
             }
         )
         NavigationBarItem(
@@ -255,22 +285,23 @@ fun VetLocationsBottomBar() {
                 )
             },
             label = { Text("Photo") },
-            selected = false,
+            selected = navController.currentDestination?.route == "gallerySelection",
             onClick = {
-
+                showPermissionsDialog = true
             }
         )
         NavigationBarItem(
             icon = {
                 Icon(
                     painter = painterResource(R.drawable.sos),
-                    contentDescription = "S.O.S"
+                    contentDescription = "sos"
                 )
             },
             label = { Text("S.O.S") },
             selected = false,
             onClick = {
-
+                val intent = Intent(context, SOSScreen::class.java)
+                context.startActivity(intent)
             }
         )
         NavigationBarItem(

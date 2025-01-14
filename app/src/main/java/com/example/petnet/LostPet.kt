@@ -2,6 +2,7 @@ package com.example.petnet
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -55,6 +56,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.petnet.ui.theme.PetnetTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,9 +66,10 @@ class LostPetScreen : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PetnetTheme {
+                val navController = rememberNavController()
                 Scaffold(
                     topBar = { LostPetTopBar() },
-                    bottomBar = { LostPetBottomBar() },
+                    bottomBar = { LostPetBottomBar(navController) },
                     content = { padding ->
                         Column(
                             modifier = Modifier
@@ -386,9 +390,33 @@ fun LostPetTopBar() {
 }
 
 @Composable
-fun LostPetBottomBar() {
+fun LostPetBottomBar(navController: NavHostController) {
     val context = LocalContext.current
-    NavigationBar {
+    var showPermissionsDialog by remember { mutableStateOf(false) }
+
+    if (showPermissionsDialog) {
+        HandlePermissions(
+            onPermissionsGranted = {
+                showPermissionsDialog = false
+                navController.navigate("gallerySelection")
+            },
+            onPermissionsDenied = {
+                showPermissionsDialog = false
+                Toast.makeText(
+                    context,
+                    "Storage permissions are required to access photos.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        )
+    }
+
+    NavigationBar(
+        modifier = Modifier
+            .background(wh)
+            .border(1.dp, gr.copy(alpha = 0.2f)),
+        containerColor = wh
+    ) {
         NavigationBarItem(
             icon = {
                 Icon(
@@ -396,12 +424,11 @@ fun LostPetBottomBar() {
                     contentDescription = "Home"
                 )
             },
-            label = { Text("Home") },
+            label = { Text(
+                "Home"
+            )  },
             selected = false,
-            onClick = {
-                val intent = Intent(context, MainFeedScreen::class.java)
-                context.startActivity(intent)
-            }
+            onClick = { navController.navigate("feed") }
         )
         NavigationBarItem(
             icon = {
@@ -413,7 +440,8 @@ fun LostPetBottomBar() {
             label = { Text("Events") },
             selected = false,
             onClick = {
-
+                val intent = Intent(context, EventsScreen::class.java)
+                context.startActivity(intent)
             }
         )
         NavigationBarItem(
@@ -424,22 +452,24 @@ fun LostPetBottomBar() {
                 )
             },
             label = { Text("Photo") },
-            selected = false,
+            selected = navController.currentDestination?.route == "gallerySelection",
             onClick = {
-
+                showPermissionsDialog = true
             }
         )
         NavigationBarItem(
             icon = {
                 Icon(
                     painter = painterResource(R.drawable.sos),
-                    contentDescription = "sos"
+                    contentDescription = "sos",
+                    tint = org
                 )
             },
-            label = { Text("S.O.S") },
-            selected = true,
+            label = { Text("S.O.S",
+                color = org) },
+            selected = false,
             onClick = {
-                val intent = Intent(context, LostPetScreen::class.java)
+                val intent = Intent(context, SOSScreen::class.java)
                 context.startActivity(intent)
             }
         )

@@ -2,10 +2,12 @@ package com.example.petnet
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -23,6 +25,8 @@ import androidx.compose.ui.unit.sp
 import com.example.petnet.ui.theme.PetnetTheme
 import androidx.compose.material3.TextField
 import androidx.compose.material3.OutlinedTextField
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,9 +35,10 @@ class ContactScreen : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PetnetTheme {
+                val navController = rememberNavController()
                 Scaffold(
                     topBar = { ContactTopBar() },
-                    bottomBar = { ContactBottomBar() },
+                    bottomBar = { ContactBottomBar(navController) },
                     content = { padding ->
                         Column(
                             modifier = Modifier
@@ -309,9 +314,33 @@ fun ContactTopBar() {
 }
 
 @Composable
-fun ContactBottomBar() {
+fun ContactBottomBar(navController: NavHostController) {
     val context = LocalContext.current
-    NavigationBar {
+    var showPermissionsDialog by remember { mutableStateOf(false) }
+
+    if (showPermissionsDialog) {
+        HandlePermissions(
+            onPermissionsGranted = {
+                showPermissionsDialog = false
+                navController.navigate("gallerySelection")
+            },
+            onPermissionsDenied = {
+                showPermissionsDialog = false
+                Toast.makeText(
+                    context,
+                    "Storage permissions are required to access photos.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        )
+    }
+
+    NavigationBar(
+        modifier = Modifier
+            .background(wh)
+            .border(1.dp, gr.copy(alpha = 0.2f)),
+        containerColor = wh
+    ) {
         NavigationBarItem(
             icon = {
                 Icon(
@@ -319,12 +348,11 @@ fun ContactBottomBar() {
                     contentDescription = "Home"
                 )
             },
-            label = { Text("Home") },
+            label = { Text(
+                "Home"
+            )  },
             selected = false,
-            onClick = {
-                val intent = Intent(context, MainFeedScreen::class.java)
-                context.startActivity(intent)
-            }
+            onClick = { navController.navigate("feed") }
         )
         NavigationBarItem(
             icon = {
@@ -335,7 +363,10 @@ fun ContactBottomBar() {
             },
             label = { Text("Events") },
             selected = false,
-            onClick = {}
+            onClick = {
+                val intent = Intent(context, EventsScreen::class.java)
+                context.startActivity(intent)
+            }
         )
         NavigationBarItem(
             icon = {
@@ -345,8 +376,38 @@ fun ContactBottomBar() {
                 )
             },
             label = { Text("Photo") },
+            selected = navController.currentDestination?.route == "gallerySelection",
+            onClick = {
+                showPermissionsDialog = true
+            }
+        )
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    painter = painterResource(R.drawable.sos),
+                    contentDescription = "sos"
+                )
+            },
+            label = { Text("S.O.S") },
             selected = false,
-            onClick = {}
+            onClick = {
+                val intent = Intent(context, SOSScreen::class.java)
+                context.startActivity(intent)
+            }
+        )
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    painter = painterResource(R.drawable.profile),
+                    contentDescription = "Profile"
+                )
+            },
+            label = { Text("Profile") },
+            selected = false,
+            onClick = {
+                val intent = Intent(context, ProfileScreen::class.java)
+                context.startActivity(intent)
+            }
         )
     }
 }

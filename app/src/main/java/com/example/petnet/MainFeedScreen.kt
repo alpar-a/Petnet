@@ -10,6 +10,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -248,16 +250,22 @@ fun BottomBar(navController: NavHostController) {
         )
     }
 
-    NavigationBar {
+    NavigationBar(
+        modifier = Modifier
+            .background(wh)
+            .border(1.dp, gr.copy(alpha = 0.2f)),
+        containerColor = wh
+    ) {
         NavigationBarItem(
             icon = {
                 Icon(
                     painter = painterResource(R.drawable.ic_home),
-                    contentDescription = "Home"
+                    contentDescription = "Home",
+                    tint = org
                 )
             },
-            label = { Text("Home") },
-            selected = true,
+            label = { Text("Home", color = org) },
+            selected = false,
             onClick = { navController.navigate("feed") }
         )
         NavigationBarItem(
