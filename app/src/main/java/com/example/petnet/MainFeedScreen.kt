@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -151,51 +152,37 @@ fun FeedImageItem(username: String, profilePictureUrl: String, description: Stri
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        // User Info Row
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(bottom = 8.dp)
         ) {
-            // Profile Picture
             Image(
-                painter = if (profilePictureUrl.isNotEmpty()) {
-                    rememberAsyncImagePainter(profilePictureUrl)
-                } else {
-                    painterResource(id = R.drawable.default_profile_pic) // Default profile picture
-                },
+                painter = rememberAsyncImagePainter(profilePictureUrl),
                 contentDescription = "Profile Picture",
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape),
                 contentScale = ContentScale.Crop
             )
-
             Spacer(modifier = Modifier.width(8.dp))
-
-            // Username
-            Text(
-                text = username,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
-            )
+            Column {
+                Text(username, fontWeight = FontWeight.Bold)
+                Text("@$username", color = Color.Gray, fontSize = 12.sp)
+            }
         }
-
-        // Post Image
         Image(
             painter = rememberAsyncImagePainter(imageUrl),
-            contentDescription = null,
+            contentDescription = "Post Image",
             modifier = Modifier
                 .fillMaxWidth()
                 .height(300.dp),
             contentScale = ContentScale.Crop
         )
-
         Spacer(modifier = Modifier.height(4.dp))
-
-        // Description
         Text(description, fontSize = 14.sp)
     }
 }
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)

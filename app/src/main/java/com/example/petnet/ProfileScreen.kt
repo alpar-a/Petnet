@@ -11,6 +11,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -59,6 +62,28 @@ class ProfileScreen : ComponentActivity() {
     }
 }
 
+@Composable
+fun ProfilePostsGrid(postImageUrls: List<String>) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(8.dp)
+    ) {
+        items(postImageUrls) { imageUrl ->
+            Image(
+                painter = rememberAsyncImagePainter(imageUrl),
+                contentDescription = "User Post",
+                modifier = Modifier
+                    .padding(4.dp)
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+        }
+    }
+}
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileTopBar() {
@@ -100,41 +125,15 @@ fun Profile() {
     val db = FirebaseFirestore.getInstance()
     val userId = auth.currentUser?.uid
     val storage = FirebaseStorage.getInstance()
-
     var profilePictureUrl by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("Username") }
     var additionalInfo by remember { mutableStateOf("Additional Info") }
-    var posts by remember { mutableStateOf(0) } // Initialize the posts variable
-
+    var postCount by remember { mutableStateOf(0) }
+    var followersCount by remember { mutableStateOf(0) }
+    var followingCount by remember { mutableStateOf(0) }
+    var posts by remember { mutableStateOf<List<Map<String, Any>>>(emptyList()) }
     var isEditDialogOpen by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-
-    // Image picker launcher
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri ->
-            uri?.let {
-                val storageRef = storage.reference.child("profile_pictures/$userId.jpg")
-                storageRef.putFile(uri)
-                    .addOnSuccessListener {
-                        storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                            profilePictureUrl = downloadUrl.toString()
-                            db.collection("profiles").document(userId!!)
-                                .update("profilePictureUrl", profilePictureUrl)
-                                .addOnSuccessListener {
-                                    Toast.makeText(context, "Profile picture updated!", Toast.LENGTH_SHORT).show()
-                                }
-                                .addOnFailureListener { e ->
-                                    Toast.makeText(context, "Failed to update Firestore: ${e.message}", Toast.LENGTH_SHORT).show()
-                                }
-                        }
-                    }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(context, "Failed to upload image: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
-            }
-        }
-    )
 
     // Fetch user data on launch
     LaunchedEffect(Unit) {
@@ -145,18 +144,59 @@ fun Profile() {
                         username = document.getString("username") ?: "Username"
                         additionalInfo = document.getString("additionalInfo") ?: "Additional Info"
                         profilePictureUrl = document.getString("profilePictureUrl") ?: ""
-                        posts = (document.getLong("posts") ?: 0).toInt() // Safely cast to Int
+                        postCount = document.getLong("posts")?.toInt() ?: 0
+                        followersCount = document.getLong("followers")?.toInt() ?: 0
+                        followingCount = document.getLong("following")?.toInt() ?: 0
                     }
                 }
                 .addOnFailureListener { e ->
                     Toast.makeText(context, "Failed to fetch profile: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
+
+            // Fetch posts for this user
+            db.collection("feed")
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnSuccessListener { documents ->
+                    posts = documents.mapNotNull { it.data }
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(context, "Failed to fetch posts: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
         }
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
+        // Profile Header
         Row(verticalAlignment = Alignment.CenterVertically) {
+            // Inside Profile composable
             Box {
+                // Image picker logic
+                val imagePickerLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.GetContent()
+                ) { uri ->
+                    uri?.let {
+                        val storageRef = storage.reference.child("profile_pictures/$userId.jpg")
+                        storageRef.putFile(it)
+                            .addOnSuccessListener {
+                                storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                                    profilePictureUrl = downloadUrl.toString()
+                                    db.collection("profiles").document(userId!!)
+                                        .update("profilePictureUrl", profilePictureUrl)
+                                        .addOnSuccessListener {
+                                            Toast.makeText(context, "Profile picture updated!", Toast.LENGTH_SHORT).show()
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Toast.makeText(context, "Failed to update Firestore: ${e.message}", Toast.LENGTH_SHORT).show()
+                                        }
+                                }
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(context, "Failed to upload image: ${e.message}", Toast.LENGTH_SHORT).show()
+                            }
+                    }
+                }
+
                 Image(
                     painter = if (profilePictureUrl.isNotEmpty()) {
                         rememberAsyncImagePainter(profilePictureUrl)
@@ -167,10 +207,11 @@ fun Profile() {
                     modifier = Modifier
                         .size(80.dp)
                         .clip(CircleShape)
-                        .clickable { launcher.launch("image/*") },
+                        .clickable { imagePickerLauncher.launch("image/*") }, // Launch image picker
                     contentScale = ContentScale.Crop
                 )
             }
+
             Spacer(Modifier.width(16.dp))
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -187,8 +228,40 @@ fun Profile() {
                     }
                 }
                 Text("@$username", color = Color.Gray)
-                Text("Posts: $posts", modifier = Modifier.padding(top = 5.dp)) // Display post count
                 Text(additionalInfo, modifier = Modifier.padding(top = 5.dp))
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Stats Row
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            ProfileStat(count = postCount.toString(), label = "Posts")
+            ProfileStat(count = followersCount.toString(), label = "Followers")
+            ProfileStat(count = followingCount.toString(), label = "Following")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Posts Grid
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            contentPadding = PaddingValues(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(posts) { post ->
+                val imageUrl = post["imageUrl"] as? String ?: ""
+                Image(
+                    painter = rememberAsyncImagePainter(imageUrl),
+                    contentDescription = "Post Image",
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(8.dp))
+                )
             }
         }
 
@@ -226,6 +299,10 @@ fun Profile() {
         }
     }
 }
+
+
+
+
 
 
 
