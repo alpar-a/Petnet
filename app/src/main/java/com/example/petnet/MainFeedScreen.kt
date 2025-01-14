@@ -191,11 +191,17 @@ fun TopBar() {
     val context = LocalContext.current
     TopAppBar(
         title = {
-            Text(
-                text = "PetNet",
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.topbarlogo),
+                    contentDescription = "PetNet Logo",
+                    modifier = Modifier.size(120.dp)
+                )
+            }
         },
         navigationIcon = {
             IconButton(onClick = { /* Search action */ }) {
@@ -218,6 +224,7 @@ fun TopBar() {
         }
     )
 }
+
 
 @Composable
 fun BottomBar(navController: NavHostController) {

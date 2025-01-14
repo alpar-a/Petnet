@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -189,11 +190,17 @@ fun MenuTopBar() {
     val context = LocalContext.current
     TopAppBar(
         title = {
-            Text(
-                text = "PetNet",
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.topbarlogo),
+                    contentDescription = "PetNet Logo",
+                    modifier = Modifier.size(120.dp)
+                )
+            }
         },
         navigationIcon = {
             IconButton(onClick = { /* Search action */ }) {

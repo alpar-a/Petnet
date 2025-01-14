@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -273,11 +274,17 @@ fun ContactTopBar() {
     val context = LocalContext.current
     TopAppBar(
         title = {
-            Text(
-                text = "PetNet",
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.topbarlogo),
+                    contentDescription = "PetNet Logo",
+                    modifier = Modifier.size(120.dp)
+                )
+            }
         },
         navigationIcon = {
             IconButton(onClick = { /* Search action */ }) {

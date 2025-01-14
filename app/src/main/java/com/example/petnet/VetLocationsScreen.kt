@@ -8,10 +8,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -177,17 +182,23 @@ fun VetLocationsTopBar() {
     val context = LocalContext.current
     TopAppBar(
         title = {
-            Text(
-                text = "PetNet",
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.topbarlogo),
+                    contentDescription = "PetNet Logo",
+                    modifier = Modifier.size(120.dp)
+                )
+            }
         },
         navigationIcon = {
-            IconButton(onClick = { (context as? ComponentActivity)?.finish() }) {
+            IconButton(onClick = { /* Search action */ }) {
                 Icon(
-                    painter = painterResource(R.drawable.back),
-                    contentDescription = "Back"
+                    painter = painterResource(R.drawable.ic_search),
+                    contentDescription = "Search"
                 )
             }
         },
