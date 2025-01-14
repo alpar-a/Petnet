@@ -4,9 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -24,8 +29,10 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.petnet.ui.theme.PetnetTheme
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,86 +99,97 @@ fun Profile() {
     val auth = FirebaseAuth.getInstance()
     val db = FirebaseFirestore.getInstance()
     val userId = auth.currentUser?.uid
+    val storage = FirebaseStorage.getInstance()
 
-    // Declare variables for user data
-    var username by remember { mutableStateOf("Veneta") }
-    var additionalInfo by remember { mutableStateOf("Finnish Spitz, 1 years old // Female") }
-    var profilePictureUrl by remember { mutableStateOf("") } // Declare profilePictureUrl variable
+    var profilePictureUrl by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("Username") }
+    var additionalInfo by remember { mutableStateOf("Additional Info") }
+    var posts by remember { mutableStateOf(0) } // Initialize the posts variable
+
     var isEditDialogOpen by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
-    // Fetch user data from Firestore
-    LaunchedEffect(Unit) {
-        if (userId == null) {
-            Toast.makeText(context, "User ID is null. Cannot load profile.", Toast.LENGTH_SHORT).show()
-            return@LaunchedEffect
+    // Image picker launcher
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            uri?.let {
+                val storageRef = storage.reference.child("profile_pictures/$userId.jpg")
+                storageRef.putFile(uri)
+                    .addOnSuccessListener {
+                        storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                            profilePictureUrl = downloadUrl.toString()
+                            db.collection("profiles").document(userId!!)
+                                .update("profilePictureUrl", profilePictureUrl)
+                                .addOnSuccessListener {
+                                    Toast.makeText(context, "Profile picture updated!", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener { e ->
+                                    Toast.makeText(context, "Failed to update Firestore: ${e.message}", Toast.LENGTH_SHORT).show()
+                                }
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(context, "Failed to upload image: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+            }
         }
+    )
 
-        db.collection("profiles").document(userId).get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    username = document.getString("username") ?: "Unknown"
-                    additionalInfo = document.getString("additionalInfo") ?: "No info available"
-                    profilePictureUrl = document.getString("profilePictureUrl") ?: ""
-                } else {
-                    Toast.makeText(context, "Document does not exist", Toast.LENGTH_SHORT).show()
+    // Fetch user data on launch
+    LaunchedEffect(Unit) {
+        if (userId != null) {
+            db.collection("profiles").document(userId).get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        username = document.getString("username") ?: "Username"
+                        additionalInfo = document.getString("additionalInfo") ?: "Additional Info"
+                        profilePictureUrl = document.getString("profilePictureUrl") ?: ""
+                        posts = (document.getLong("posts") ?: 0).toInt() // Safely cast to Int
+                    }
                 }
-            }
-            .addOnFailureListener { exception ->
-                Toast.makeText(context, "Failed to load profile: ${exception.message}", Toast.LENGTH_SHORT).show()
-            }
+                .addOnFailureListener { e ->
+                    Toast.makeText(context, "Failed to fetch profile: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
-
 
     Column(modifier = Modifier.padding(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = if (profilePictureUrl.isNotEmpty()) {
-                    rememberAsyncImagePainter(profilePictureUrl) // Load from URL
-                } else {
-                    painterResource(id = R.drawable.default_profile_pic) // Default image
-                },
-                contentDescription = "Profile Picture",
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
-            )
-
+            Box {
+                Image(
+                    painter = if (profilePictureUrl.isNotEmpty()) {
+                        rememberAsyncImagePainter(profilePictureUrl)
+                    } else {
+                        painterResource(id = R.drawable.default_profile_pic)
+                    },
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape)
+                        .clickable { launcher.launch("image/*") },
+                    contentScale = ContentScale.Crop
+                )
+            }
             Spacer(Modifier.width(16.dp))
             Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween // Even spacing
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(username, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-
+                    Spacer(Modifier.weight(1f))
                     Button(
                         onClick = { isEditDialogOpen = true },
                         modifier = Modifier
                             .height(30.dp)
-                            .widthIn(min = 100.dp), // Minimum width for consistency
+                            .width(100.dp),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("EDIT PROFILE", fontSize = 12.sp)
+                        Text("EDIT", fontSize = 12.sp)
                     }
                 }
                 Text("@$username", color = Color.Gray)
+                Text("Posts: $posts", modifier = Modifier.padding(top = 5.dp)) // Display post count
                 Text(additionalInfo, modifier = Modifier.padding(top = 5.dp))
             }
-
-        }
-
-        Row(
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            ProfileStat("62", "Posts")
-            ProfileStat("1852", "Followers")
-            ProfileStat("2100", "Following")
         }
 
         // Edit Profile Dialog
@@ -185,32 +203,30 @@ fun Profile() {
                             Toast.makeText(context, "User ID is null. Cannot update profile.", Toast.LENGTH_SHORT).show()
                             return@launch
                         }
-
                         db.collection("profiles").document(userId)
-                            .set(
+                            .update(
                                 mapOf(
                                     "username" to newUsername,
-                                    "additionalInfo" to newInfo,
-                                    "profilePictureUrl" to profilePictureUrl // Ensure this is included
-                                ), SetOptions.merge()
+                                    "additionalInfo" to newInfo
+                                )
                             )
                             .addOnSuccessListener {
                                 username = newUsername
                                 additionalInfo = newInfo
-                                Toast.makeText(context, "Profile updated successfully!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Profile updated!", Toast.LENGTH_SHORT).show()
                                 isEditDialogOpen = false
                             }
-                            .addOnFailureListener { exception ->
-                                Toast.makeText(context, "Failed to update profile: ${exception.message}", Toast.LENGTH_SHORT).show()
+                            .addOnFailureListener { e ->
+                                Toast.makeText(context, "Failed to update profile: ${e.message}", Toast.LENGTH_SHORT).show()
                             }
                     }
-
                 },
                 onClose = { isEditDialogOpen = false }
             )
         }
     }
 }
+
 
 
 @Composable
@@ -255,6 +271,7 @@ fun EditProfileDialog(
         }
     )
 }
+
 
 @Composable
 fun ProfileStat(count: String, label: String) {

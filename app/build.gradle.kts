@@ -138,5 +138,8 @@ dependencies {
     implementation ("org.json:json:20210307")
 
     implementation (libs.coil.kt.coil.compose.v222)
+    implementation (libs.google.firebase.storage.ktx)
+    implementation (libs.androidx.activity.ktx)
+
 
 }

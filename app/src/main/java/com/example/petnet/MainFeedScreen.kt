@@ -2,6 +2,7 @@ package com.example.petnet
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -10,49 +11,48 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.petnet.ui.theme.PetnetTheme
-import com.google.firebase.Firebase
-import com.google.firebase.FirebaseApp
-import com.google.firebase.storage.storage
-import com.google.firebase.storage.FirebaseStorage
-import androidx.compose.runtime.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import coil.compose.rememberAsyncImagePainter
-import androidx.compose.ui.layout.ContentScale
-import androidx.core.content.ContextCompat
-import androidx.navigation.NavController
+import com.example.petnet.ui.theme.PetnetTheme
+import com.google.firebase.firestore.FirebaseFirestore
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.firestore.FirebaseFirestore
-@OptIn(ExperimentalMaterial3Api::class)
+import androidx.core.content.ContextCompat
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 class MainFeedScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        FirebaseApp.initializeApp(this)
         super.onCreate(savedInstanceState)
         setContent {
             PetnetTheme {
-                val navController = rememberNavController() // Initialize NavController
+                val navController = rememberNavController()
                 Scaffold(
                     topBar = { TopBar() },
                     bottomBar = { BottomBar(navController) },
                     content = { padding ->
-                        NavigationHost(padding)
+                        NavigationHost(navController, padding)
                     }
                 )
             }
@@ -61,62 +61,71 @@ class MainFeedScreen : ComponentActivity() {
 }
 
 @Composable
-fun NavigationHost(padding: PaddingValues) {
-    val navController = rememberNavController()
+fun HandlePermissions(
+    onPermissionsGranted: () -> Unit,
+    onPermissionsDenied: () -> Unit
+) {
+    val context = LocalContext.current
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val granted = permissions.values.all { it }
+        if (granted) {
+            onPermissionsGranted()
+        } else {
+            onPermissionsDenied()
+        }
+    }
 
-    NavHost(
-        navController = navController,
-        startDestination = "feed" // Set your starting screen
-    ) {
-        composable("feed") { FeedContent(padding) }
-        composable("gallerySelection") { GallerySelectionScreen() }
-        // Add other screens as needed
+    val permissions = when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> arrayOf(
+            android.Manifest.permission.READ_MEDIA_IMAGES,
+            android.Manifest.permission.READ_MEDIA_VIDEO,
+            android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+        )
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> arrayOf(
+            android.Manifest.permission.READ_MEDIA_IMAGES,
+            android.Manifest.permission.READ_MEDIA_VIDEO
+        )
+        else -> arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+    }
+
+    LaunchedEffect(Unit) {
+        permissionLauncher.launch(permissions)
     }
 }
 
-fun addFeedItem(
-    username: String,
-    caption: String,
-    imageUrl: String,
-    profilePictureUrl: String
-) {
-    val db = FirebaseFirestore.getInstance()
-    val feedItem = hashMapOf(
-        "username" to username,
-        "caption" to caption,
-        "imageUrl" to imageUrl,
-        "profilePictureUrl" to profilePictureUrl
-    )
 
-    db.collection("feed")
-        .add(feedItem)
-        .addOnSuccessListener {
-            println("Feed item added successfully!")
-        }
-        .addOnFailureListener { e ->
-            println("Error adding feed item: ${e.message}")
-        }
+@Composable
+fun NavigationHost(navController: NavHostController, padding: PaddingValues) {
+    NavHost(
+        navController = navController,
+        startDestination = "feed"
+    ) {
+        composable("feed") { FeedContent(padding) }
+        composable("gallerySelection") { GallerySelectionScreen(navController) }
+    }
 }
+
 
 @Composable
 fun FeedContent(padding: PaddingValues) {
-    var imageUrls = listOf(
-        "https://firebasestorage.googleapis.com/v0/b/petnet-a0517.firebasestorage.app/o/images%2FFeed-Cat%20(1).png?alt=media&token=e552b544-ad92-42a8-9226-a628eb1b08e9",
-        "https://firebasestorage.googleapis.com/v0/b/petnet-a0517.firebasestorage.app/o/images%2FFeed-Cat.png?alt=media&token=5a67fd07-b98b-4c03-b5dc-87d4ae56f0bc",
-        "https://firebasestorage.googleapis.com/v0/b/petnet-a0517.firebasestorage.app/o/images%2FFeed-Dog%20(1).png?alt=media&token=4081316f-069b-4808-800e-001360d26cfb",
-        "https://firebasestorage.googleapis.com/v0/b/petnet-a0517.firebasestorage.app/o/images%2FFeed-Dog.png?alt=media&token=f803d3f8-8a1f-493a-bff1-f2582740b2ec"
-    )
+    val db = FirebaseFirestore.getInstance()
+    var posts by remember { mutableStateOf<List<Map<String, Any>>>(emptyList()) }
 
-
-    // Fetch images from Firebase Storage
+    // Fetch posts from Firestore
     LaunchedEffect(Unit) {
-        fetchImagesFromFirebase { urls ->
-            imageUrls = urls
-            println("Fetched URLs: $urls") // Debugging log
-        }
+        db.collection("feed")
+            .orderBy("timestamp")
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    println("Listen failed: ${e.message}")
+                    return@addSnapshotListener
+                }
+                posts = snapshots?.documents?.mapNotNull { it.data } ?: emptyList()
+            }
     }
 
-    // Display images in a lazy column
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -124,21 +133,54 @@ fun FeedContent(padding: PaddingValues) {
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(16.dp)
     ) {
-        items(imageUrls) { imageUrl ->
-            FeedImageItem(imageUrl)
+        items(posts) { post ->
+            val username = post["username"] as String? ?: "Unknown"
+            val profilePictureUrl = post["profilePictureUrl"] as String? ?: ""
+            val description = post["description"] as String? ?: ""
+            val imageUrl = post["imageUrl"] as String? ?: ""
+            FeedImageItem(username, profilePictureUrl, description, imageUrl)
         }
     }
 }
 
 
-
 @Composable
-fun FeedImageItem(imageUrl: String) {
+fun FeedImageItem(username: String, profilePictureUrl: String, description: String, imageUrl: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
+        // User Info Row
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
+            // Profile Picture
+            Image(
+                painter = if (profilePictureUrl.isNotEmpty()) {
+                    rememberAsyncImagePainter(profilePictureUrl)
+                } else {
+                    painterResource(id = R.drawable.default_profile_pic) // Default profile picture
+                },
+                contentDescription = "Profile Picture",
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // Username
+            Text(
+                text = username,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
+        }
+
+        // Post Image
         Image(
             painter = rememberAsyncImagePainter(imageUrl),
             contentDescription = null,
@@ -147,54 +189,13 @@ fun FeedImageItem(imageUrl: String) {
                 .height(300.dp),
             contentScale = ContentScale.Crop
         )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        // Description
+        Text(description, fontSize = 14.sp)
     }
 }
-
-
-
-fun fetchImages(onResult: (List<String>) -> Unit) {
-    val storage = FirebaseStorage.getInstance()
-    val storageRef = storage.reference.child("images/")
-
-    storageRef.listAll()
-        .addOnSuccessListener { result ->
-            val urls = mutableListOf<String>()
-            val tasks = result.items.map { item ->
-                item.downloadUrl.addOnSuccessListener { uri ->
-                    urls.add(uri.toString())
-                }
-            }
-            tasks.lastOrNull()?.addOnCompleteListener {
-                onResult(urls)
-            }
-        }
-        .addOnFailureListener {
-            onResult(emptyList()) // Return empty list on failure
-        }
-}
-
-fun fetchImagesFromFirebase(onResult: (List<String>) -> Unit) {
-    val storage = FirebaseStorage.getInstance()
-    val storageRef = storage.reference.child("images/") // Ensure this matches your Firebase Storage folder
-
-    storageRef.listAll()
-        .addOnSuccessListener { result ->
-            val urls = mutableListOf<String>()
-            result.items.forEach { item ->
-                item.downloadUrl.addOnSuccessListener { uri ->
-                    urls.add(uri.toString())
-                    // Notify when all URLs are fetched
-                    if (urls.size == result.items.size) {
-                        onResult(urls)
-                    }
-                }
-            }
-        }
-        .addOnFailureListener {
-            onResult(emptyList())
-        }
-}
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -232,54 +233,27 @@ fun TopBar() {
 }
 
 @Composable
-fun FeedItem(username: String, caption: String, imageRes: Int) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 8.dp)
-        ) {
-            Image(
-                painter = painterResource(R.drawable.profile_placeholder),
-                contentDescription = "Profile Picture",
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = username, fontWeight = FontWeight.Bold)
-        }
-        Image(
-            painter = painterResource(imageRes),
-            contentDescription = "Post Image",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-        )
-        Text(
-            text = caption,
-            modifier = Modifier.padding(top = 4.dp)
-        )
-    }
-}
-
-@Composable
-fun BottomBar(navController: NavController) {
+fun BottomBar(navController: NavHostController) {
     val context = LocalContext.current
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (!isGranted) {
-            Toast.makeText(
-                context,
-                "Storage permission is required to access photos.",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+    var showPermissionsDialog by remember { mutableStateOf(false) }
+
+    if (showPermissionsDialog) {
+        HandlePermissions(
+            onPermissionsGranted = {
+                showPermissionsDialog = false
+                navController.navigate("gallerySelection")
+            },
+            onPermissionsDenied = {
+                showPermissionsDialog = false
+                Toast.makeText(
+                    context,
+                    "Storage permissions are required to access photos.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        )
     }
+
     NavigationBar {
         NavigationBarItem(
             icon = {
@@ -316,15 +290,7 @@ fun BottomBar(navController: NavController) {
             label = { Text("Photo") },
             selected = navController.currentDestination?.route == "gallerySelection",
             onClick = {
-                if (ContextCompat.checkSelfPermission(
-                        context,
-                        android.Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    navController.navigate("gallerySelection")
-                } else {
-                    permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                }
+                showPermissionsDialog = true
             }
         )
         NavigationBarItem(
